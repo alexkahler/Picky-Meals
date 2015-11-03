@@ -105,19 +105,13 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_settings) {
 
         }
+        // trolololo.
 
-        testMethod();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
 
-
-    }
-    public void testMethod() {
-        //it doesnt do anything. Just testing the VCS.
-        String s = "testing";
-        System.out.println(s);
 
     }
 }
