@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Picky</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    //Nav bar menu strings
+    <string name="nav_home">Get a suggestion</string>
+    <string name="nav_log_food">Log a dinner</string>
+    <string name="nav_dinner_plan">Dinner plan</string>
+    <string name="nav_statistics">Your statistics</string>
+    <string name="nav_feedback">Feedback</string>
+    <string name="nav_preferences">Preferences</string>
+    <string name="nav_settings">Settings</string>
+</resources>
