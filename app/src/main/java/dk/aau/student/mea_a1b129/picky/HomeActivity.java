@@ -78,7 +78,7 @@ public class HomeActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here. lol
+        // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
@@ -106,8 +106,18 @@ public class HomeActivity extends AppCompatActivity
 
         }
 
+        testMethod();
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+
+
+    }
+    public void testMethod() {
+        //it doesnt do anything. Just testing the VCS.
+        String s = "testing";
+        System.out.println(s);
+
     }
 }
