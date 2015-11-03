@@ -85,27 +85,26 @@ public class HomeActivity extends AppCompatActivity
             Intent intent = new Intent(this, HomeActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_log_food) {
-
+            //log food to diary
         } else if (id == R.id.nav_dinner_plan) {
-
+            //overview of the coming weeks meals.
         } else if (id == R.id.nav_statistics) {
-
+            //statistics of the meals eaten - maybe profile?
         } else if (id == R.id.nav_feedback) {
             Intent intent = new Intent();
             intent.setAction(Intent.ACTION_SEND);
             intent.setType("message/rfc822");
             intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"mda15@student.aau.dk"});
             intent.putExtra(Intent.EXTRA_SUBJECT, "Picky Feedback");
-            //intent.putExtra(Intent.EXTRA_TEXT, "Test");
             if (intent.resolveActivity(getPackageManager()) != null) {
                 startActivity(intent);
             }
         } else if (id == R.id.nav_preferences) {
 
+
         } else if (id == R.id.nav_settings) {
-
+            //settings and preferences seperate necessary?
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
