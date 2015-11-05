@@ -24,10 +24,11 @@
 
     <include layout="@layout/content_statistics" />
 
-    <android.support.design.widget.FloatingActionButton android:id="@+id/fab"
+    <android.support.design.widget.FloatingActionButton
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin" app:layout_anchor="@id/app_bar"
         app:layout_anchorGravity="bottom|end" android:src="@android:drawable/ic_dialog_email"
-        android:visibility="invisible" />
+        android:visibility="invisible"
+        android:id="@+id/statistics_fab" />
 
 </android.support.design.widget.CoordinatorLayout>

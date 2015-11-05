@@ -19,40 +19,47 @@ public class DinnerRepository {
         dbHelper = new DatabaseHelper(context);
     }
 
-    /*
-    Insert a new meal into the database.
-    */
-    public boolean insertDinner(String name, String cuisine, String ingredientsID) {
+    /**
+     * Insert a new meal into the database.
+     * TODO: Add @param and @return to documentation.
+     */
+    public boolean insertDinner(String name, String description, String cuisine, String ingredientsID, int rating) {
         ContentValues cv = new ContentValues();
-        cv.put(Dinner.DB_NAME, name);
-        cv.put(Dinner.DB_CUISINE, cuisine);
-        cv.put(Dinner.DB_INGREDIENTS_ID, ingredientsID);
-        dbHelper.getWritableDatabase().insert(Dinner.DB_TABLE_NAME, null, cv);
+        if(name !=null) {
+            cv.put(Dinner.KEY_NAME, name); }
+        else {
+            return false; }
+        cv.put(Dinner.KEY_DESCRIPTION, description);
+        cv.put(Dinner.KEY_CUISINE, cuisine);
+        cv.put(Dinner.KEY_INGREDIENTS_ID, ingredientsID);
+        cv.put(Dinner.KEY_RATING, rating);
+        dbHelper.getWritableDatabase().insert(Dinner.TABLE_NAME, null, cv);
         dbHelper.close();
         return true;
     }
 
+
     public void deleteDinner(int dinnerID) {
-        dbHelper.getWritableDatabase().delete(Dinner.DB_TABLE_NAME, Dinner.DB_ID + "=?",
+        dbHelper.getWritableDatabase().delete(Dinner.TABLE_NAME, Dinner.KEY_ID + " = ?",
                 new String[]{Integer.toString(dinnerID)});
         dbHelper.close();
     }
 
     public Dinner getDinner(int dinnerID) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor results = db.query(
-                Dinner.DB_TABLE_NAME,
-                new String[]{Dinner.DB_NAME, Dinner.DB_DESCRIPTION, Dinner.DB_CUISINE,
-                        Dinner.DB_INGREDIENTS_ID},Dinner.DB_ID, new String[]{Integer.toString(dinnerID)},
-                null, null, null, null);
+        Cursor results = db.rawQuery("SELECT * FROM " + Dinner.TABLE_NAME + " WHERE " + Dinner.KEY_ID + " = ?", new String[]{Integer.toString(dinnerID)});
         if(results.moveToFirst()) {
+            System.out.println("In getDinner if-statement");
             Dinner d = new Dinner();
             do {
-                d.setName(results.getString(results.getColumnIndex(Dinner.DB_NAME)));
-                d.setDescription(results.getString(results.getColumnIndex(Dinner.DB_DESCRIPTION)));
-                d.setCuisine(results.getString(results.getColumnIndex(Dinner.DB_CUISINE)));
-                String[] raw = results.getString(results.getColumnIndex(Dinner.DB_INGREDIENTS_ID)).replaceAll("\\]|\\[", "").split(",");
+                System.out.println("Trying to set Dinner-class");
+                d.setName(results.getString(results.getColumnIndex(Dinner.KEY_NAME)));
+                d.setDescription(results.getString(results.getColumnIndex(Dinner.KEY_DESCRIPTION)));
+                d.setCuisine(results.getString(results.getColumnIndex(Dinner.KEY_CUISINE)));
+                d.setRating(results.getInt(results.getColumnIndex(Dinner.KEY_RATING)));
+                String[] raw = results.getString(results.getColumnIndex(Dinner.KEY_INGREDIENTS_ID)).replaceAll("\\]|\\[|\\s", "").split(",");
                 for(int i = 0; i < raw.length; i++) {
+
                     d.addIngredients(Integer.parseInt(raw[i]));
                 }
             }
@@ -68,21 +75,22 @@ public class DinnerRepository {
 
     }
 
-    /*
-    Returns a list of meals - if no meals are found returns null.
+    /**
+     *Returns a list of meals - if no meals are found returns null.
      */
     public List<Dinner> getAllDinners() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor results = db.query(Dinner.DB_TABLE_NAME, new String[]{Dinner.DB_ID, Dinner.DB_NAME, Dinner.DB_DESCRIPTION, Dinner.DB_CUISINE, Dinner.DB_INGREDIENTS_ID}, null, null, null, null, null);
+        Cursor results = db.query(Dinner.TABLE_NAME, new String[]{Dinner.KEY_ID, Dinner.KEY_NAME, Dinner.KEY_DESCRIPTION, Dinner.KEY_CUISINE, Dinner.KEY_INGREDIENTS_ID}, null, null, null, null, null);
         if(results.moveToFirst()) {
             List<Dinner> dinnerList = new ArrayList<>();
             do {
                 Dinner d = new Dinner();
-                try { d.setDinnerID(Integer.parseInt(results.getString(results.getColumnIndex(Dinner.DB_ID)))); } catch(Exception e) {e.printStackTrace();}
-                d.setName(results.getString(results.getColumnIndex(Dinner.DB_NAME)));
-                d.setDescription(results.getString(results.getColumnIndex(Dinner.DB_DESCRIPTION)));
-                d.setCuisine(results.getString(results.getColumnIndex(Dinner.DB_CUISINE)));
-                String[] raw = results.getString(results.getColumnIndex(Dinner.DB_INGREDIENTS_ID)).replaceAll("\\]|\\[", "").split(",");
+                //TODO: Change use constructor instead of individual methods.
+                try { d.setDinnerID(Integer.parseInt(results.getString(results.getColumnIndex(Dinner.KEY_ID)))); } catch(Exception e) {e.printStackTrace();}
+                d.setName(results.getString(results.getColumnIndex(Dinner.KEY_NAME)));
+                d.setDescription(results.getString(results.getColumnIndex(Dinner.KEY_DESCRIPTION)));
+                d.setCuisine(results.getString(results.getColumnIndex(Dinner.KEY_CUISINE)));
+                String[] raw = results.getString(results.getColumnIndex(Dinner.KEY_INGREDIENTS_ID)).replaceAll("\\]|\\[", "").split(",");
                 for (int i = 0; i < raw.length; i++) {
                     d.addIngredients(Integer.parseInt(raw[i]));
                 }

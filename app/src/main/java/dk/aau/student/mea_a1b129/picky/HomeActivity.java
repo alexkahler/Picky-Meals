@@ -1,6 +1,7 @@
 package dk.aau.student.mea_a1b129.picky;
 
 import android.content.Intent;
+import android.media.Rating;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,6 +14,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.RatingBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class HomeActivity extends AppCompatActivity
@@ -25,6 +28,8 @@ public class HomeActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
+        //Floating action button part.
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -34,6 +39,7 @@ public class HomeActivity extends AppCompatActivity
             }
         });
 
+        //Open and close part navigation menu.
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -42,6 +48,22 @@ public class HomeActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        //Populate the database.
+        DinnerRepository dr = new DinnerRepository(this.getApplicationContext());
+        if(dr.insertDinner("Sandwich", "Make me a sandwich", "Waifu food", "1, 2, 3", 4)) {
+            Toast.makeText(this, "Database populated", Toast.LENGTH_SHORT).show();
+        } else { Toast.makeText(this, "Error: Could not populate database", Toast.LENGTH_SHORT).show(); }
+
+
+        //Populate the layout.
+        TextView dinnerTitle = (TextView) findViewById(R.id.home_dinner_tiltle);
+        TextView dinnerDescription = (TextView) findViewById(R.id.home_dinner_description);
+        RatingBar dinnerRating = (RatingBar) findViewById(R.id.home_dinner_rating);
+
+        dinnerTitle.setText(dr.getDinner(1).getName());
+        dinnerDescription.setText(dr.getDinner(1).getDescription());
+        dinnerRating.setRating(dr.getDinner(1).getRating());
     }
 
     @Override
@@ -78,6 +100,7 @@ public class HomeActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
+    //TODO move onNavigationItemSelected into own super class and extend all activities from super class menu.
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
@@ -89,6 +112,7 @@ public class HomeActivity extends AppCompatActivity
             Intent intent = new Intent(this, DinnerHistory.class);
             startActivity(intent);
         } else if (id == R.id.nav_dinner_plan) {
+            //TODO:
             Toast.makeText(getApplicationContext(), "Coming soon.", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_statistics) {
             Intent intent = new Intent(this, StatisticsActivity.class);
@@ -103,7 +127,7 @@ public class HomeActivity extends AppCompatActivity
                 startActivity(intent);
             }
         } else if (id == R.id.nav_preferences) {
-
+            //TODO make preferences Activity
 
         } else if (id == R.id.nav_settings) {
             Toast.makeText(getApplicationContext(), "Coming soon.", Toast.LENGTH_SHORT).show();

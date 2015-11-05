@@ -31,12 +31,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 TAG_CATEGORY + " TEXT)"
         );
         db.execSQL(
-                "CREATE TABLE " + Dinner.DB_TABLE_NAME + " (" +
-                        Dinner.DB_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        Dinner.DB_NAME + " TEXT, " +
-                        Dinner.DB_DESCRIPTION + " TEXT, " +
-                        Dinner.DB_CUISINE + " TEXT, " +
-                        Dinner.DB_INGREDIENTS_ID + " TEXT)"
+                "CREATE TABLE " + Dinner.TABLE_NAME + " (" +
+                        Dinner.KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        Dinner.KEY_NAME + " TEXT, " +
+                        Dinner.KEY_DESCRIPTION + " TEXT, " +
+                        Dinner.KEY_CUISINE + " TEXT, " +
+                        Dinner.KEY_RATING + " INTEGER, " +
+                        Dinner.KEY_INGREDIENTS_ID + " TEXT)"
         );
     }
 
@@ -49,8 +50,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return DATABASE_VERSION;
     }
 
-    /*
-    Insert a new ingredient into the Ingredients Table in the Database.
+    /**
+     * Insert a new ingredient into the Ingredients Table in the Database.
+     * @param name The name of the Ingredients tag.
+     * @param category the category of the ingredients, e.g. meat, vegetable, fruit.
      */
     public boolean insertIngredientsTag(String name, String category) {
         ContentValues cv = new ContentValues();
@@ -60,8 +63,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    /*
-    Update an ingredient in the Ingredients table.
+    /**
+     * Update a new ingredient into the Ingredients Table in the Database.
+     * @param name The name of the Ingredients tag.
+     * @param category the category of the ingredients, e.g. meat, vegetable, fruit.
      */
     public boolean updateIngredientsTag(int id, String name, String category) {
         ContentValues cv = new ContentValues();
@@ -71,8 +76,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    /*
-    Returns a specific ingredient at id.
+    /**
+     * Returns a specific ingredient at id.
+     * @param id the id of the ingredient to return.
+     * @return returns ingredient at the specified id in the database as Cursor-object.
+     * @see Cursor
      */
     public Cursor getIngredient(int id) {
         return this.getReadableDatabase().rawQuery("SELECT * FROM " + TAG_TABLE_NAME + " WHERE " +
@@ -94,11 +102,4 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return this.getWritableDatabase().delete(TAG_TABLE_NAME, TAG_ID + " = ? ",
                 new String[]{Integer.toString(id)});
     }
-
-
-    /*
-    public boolean updateMeal(int id, String name, String cuisine, String ingredientsID) {
-        ContentValues cv
-    }
-    */
 }

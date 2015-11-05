@@ -12,13 +12,13 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:weightSum="1">
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/dinner_image"
+            android:id="@+id/home_dinner_image"
             android:layout_gravity="center_vertical"
             android:layout_weight="0.1" />
 
@@ -27,17 +27,18 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Dinner Title"
-            android:id="@+id/dinner_tiltle"
+            android:id="@+id/home_dinner_tiltle"
             android:layout_weight="0" />
 
         <RatingBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/dinner_rating"
+            android:id="@+id/home_dinner_rating"
             android:layout_gravity="center_horizontal" />
 
-        <TextView android:text="Dinner description" android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        <TextView android:text="Dinner description" android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/home_dinner_description" />
 
     </LinearLayout>
 </RelativeLayout>
