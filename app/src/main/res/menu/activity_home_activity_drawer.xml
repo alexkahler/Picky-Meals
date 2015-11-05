@@ -4,8 +4,8 @@
     <group android:checkableBehavior="single">
         <item android:id="@+id/nav_home" android:icon="@android:drawable/ic_menu_camera"
             android:title="@string/nav_home" />
-        <item android:id="@+id/nav_log_food" android:icon="@android:drawable/ic_menu_gallery"
-            android:title="@string/nav_log_food" />
+        <item android:id="@+id/nav_dinner_history" android:icon="@android:drawable/ic_menu_gallery"
+            android:title="@string/nav_dinner_history" />
         <item android:id="@+id/nav_dinner_plan" android:icon="@android:drawable/ic_menu_slideshow"
             android:title="@string/nav_dinner_plan" />
         <item android:id="@+id/nav_statistics" android:icon="@android:drawable/ic_menu_manage"

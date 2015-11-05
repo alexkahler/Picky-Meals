@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -49,7 +50,7 @@ public class HomeActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            this.finish();
         }
     }
 
@@ -84,10 +85,11 @@ public class HomeActivity extends AppCompatActivity
         if (id == R.id.nav_home) {
             Intent intent = new Intent(this, HomeActivity.class);
             startActivity(intent);
-        } else if (id == R.id.nav_log_food) {
-            //log food to diary
+        } else if (id == R.id.nav_dinner_history) {
+            Intent intent = new Intent(this, DinnerHistory.class);
+            startActivity(intent);
         } else if (id == R.id.nav_dinner_plan) {
-            //overview of the coming weeks meals.
+            Toast.makeText(getApplicationContext(), "Coming soon.", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_statistics) {
             Intent intent = new Intent(this, StatisticsActivity.class);
             startActivity(intent);
@@ -104,7 +106,7 @@ public class HomeActivity extends AppCompatActivity
 
 
         } else if (id == R.id.nav_settings) {
-            //settings and preferences seperate necessary?
+            Toast.makeText(getApplicationContext(), "Coming soon.", Toast.LENGTH_SHORT).show();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

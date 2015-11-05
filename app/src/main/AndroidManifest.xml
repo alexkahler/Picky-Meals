@@ -27,6 +27,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="dk.aau.student.mea_a1b129.picky.HomeActivity" />
         </activity>
+        <activity android:name=".DinnerHistory" >
+        </activity>
     </application>
 
 </manifest>

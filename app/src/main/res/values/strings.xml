@@ -9,7 +9,7 @@
     <!-- App drawer menu strings -->
     <string name="nav_title_tools">Tools</string>
     <string name="nav_home">Get a suggestion</string>
-    <string name="nav_log_food">Log a dinner</string>
+    <string name="nav_dinner_history">Dinner History</string>
     <string name="nav_dinner_plan">Dinner plan</string>
     <string name="nav_statistics">Your statistics</string>
     <string name="nav_feedback">Feedback</string>
