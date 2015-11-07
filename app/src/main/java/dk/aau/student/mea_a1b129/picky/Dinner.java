@@ -1,8 +1,5 @@
 package dk.aau.student.mea_a1b129.picky;
 
-import android.content.ContentValues;
-import android.content.Context;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,9 +21,9 @@ public class Dinner {
     private String description;
     private String cuisine;
     private int rating;
-    private List<Integer> ingredients = new ArrayList<>();
+    private List<Integer> ingredientID = new ArrayList<>();
 
-
+    
 
     public void setDinnerID(int id) {
         dinnerID = id;
@@ -60,10 +57,6 @@ public class Dinner {
         cuisine = newCuisine;
     }
 
-    public void addIngredients(int newIngredientID) {
-        ingredients.add(newIngredientID);
-    }
-
     public int getRating() {
         return rating;
     }
@@ -72,16 +65,20 @@ public class Dinner {
         this.rating = rating;
     }
 
+    public void addIngredients(int newIngredientID) {
+        ingredientID.add(newIngredientID);
+    }
+
     public boolean removeIngredients(int ingredientsID) {
-        if(ingredients.contains(ingredientsID)) {
-            ingredients.remove(ingredientsID);
+        if(ingredientID.contains(ingredientsID)) {
+            ingredientID.remove(ingredientsID);
             return true;
         } else {
             return false;
         }
     }
 
-    public List<Integer> getIngredients() {
-        return ingredients;
+    public List<Integer> getIngredientID() {
+        return ingredientID;
     }
 }

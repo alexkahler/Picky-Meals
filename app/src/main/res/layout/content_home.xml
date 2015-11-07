@@ -7,38 +7,59 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:showIn="@layout/app_bar_home_activity" tools:context=".home_activity">
+    tools:showIn="@layout/app_bar_home_activity" tools:context=".home_activity"
+    android:id="@+id/content_home_rlayout">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:weightSum="1">
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/home_dinner_image"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="0.1" />
+        android:weightSum="1"
+        android:id="@+id/content_home_llayout">
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Dinner Title"
-            android:id="@+id/home_dinner_tiltle"
-            android:layout_weight="0" />
+            android:id="@+id/home_dinner_title" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Dinner Category"
+            android:id="@+id/home_dinner_category" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Dinner Description"
+            android:id="@+id/home_dinner_description" />
 
         <RatingBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/home_dinner_rating"
-            android:layout_gravity="center_horizontal" />
+            android:rating="2"
+            android:layout_gravity="center" />
 
-        <TextView android:text="Dinner description" android:layout_width="match_parent"
+        <Button
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/home_dinner_description" />
+            android:text="New Suggestion"
+            android:id="@+id/home_dinner_new_suggestion_button"
+            android:layout_gravity="right" />
 
+        <GridView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/home_dinner_gridview"
+            android:layout_gravity="center"
+            android:numColumns="auto_fit"
+            android:columnWidth="90dp"
+            android:stretchMode="columnWidth" />
     </LinearLayout>
+
 </RelativeLayout>

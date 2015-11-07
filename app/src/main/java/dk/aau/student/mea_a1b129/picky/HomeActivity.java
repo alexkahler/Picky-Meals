@@ -1,7 +1,7 @@
 package dk.aau.student.mea_a1b129.picky;
 
+import android.content.ContentValues;
 import android.content.Intent;
-import android.media.Rating;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,12 +14,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.GridView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    private int currentlySuggestedDinnerID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +35,16 @@ public class HomeActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //New dinner suggestion button.
+        Button newSuggestionButton = (Button) findViewById(R.id.home_dinner_new_suggestion_button);
+        newSuggestionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getNewDinnerSuggestion();
+            }
+        });
 
-        //Floating action button part.
+        //Floating action button.
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -39,31 +54,67 @@ public class HomeActivity extends AppCompatActivity
             }
         });
 
-        //Open and close part navigation menu.
+        //Open and close navigation menu.
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        // populateDB();
+        getNewDinnerSuggestion();
 
-        //Populate the database.
+
+
+
+        /*
+        TextView ingredient1 = (TextView) findViewById(R.id.home_dinner_ingredient);
+        ingredient1.setText(ir.getIngredient(dr.getDinner(1).getIngredientID().get(0)).getName());
+
+        RelativeLayout rl = (RelativeLayout) findViewById(R.id.content_home_rlayout);
+        LinearLayout llayout = (LinearLayout) findViewById(R.id.content_home_llayout);
+        for(int i = 0; i <= 5; i++) {
+            LinearLayout ll = new LinearLayout(this);
+            ll.setOrientation(LinearLayout.VERTICAL);
+            TextView tv = new TextView(this);
+            tv.setTextAppearance(this, android.R.style.TextAppearance_Large);
+            tv.setText(dr.getDinner(1).getName());
+            ll.addView(tv);
+            llayout.addView(ll);
+        }
+        */
+    }
+
+    private void getNewDinnerSuggestion() {
+        // Make the repositories.
         DinnerRepository dr = new DinnerRepository(this.getApplicationContext());
-        if(dr.insertDinner("Sandwich", "Make me a sandwich", "Waifu food", "1, 2, 3", 4)) {
-            Toast.makeText(this, "Database populated", Toast.LENGTH_SHORT).show();
-        } else { Toast.makeText(this, "Error: Could not populate database", Toast.LENGTH_SHORT).show(); }
+        IngredientRepository ir = new IngredientRepository(this.getApplicationContext());
 
-
-        //Populate the layout.
-        TextView dinnerTitle = (TextView) findViewById(R.id.home_dinner_tiltle);
+        //Find the views
+        TextView dinnerTitle = (TextView) findViewById(R.id.home_dinner_title);
         TextView dinnerDescription = (TextView) findViewById(R.id.home_dinner_description);
         RatingBar dinnerRating = (RatingBar) findViewById(R.id.home_dinner_rating);
+        TextView dinnerCategory = (TextView) findViewById(R.id.home_dinner_category);
 
-        dinnerTitle.setText(dr.getDinner(1).getName());
-        dinnerDescription.setText(dr.getDinner(1).getDescription());
-        dinnerRating.setRating(dr.getDinner(1).getRating());
+        //Get a random suggestion
+        List<Dinner> allDinners = dr.getAllDinners();
+        currentlySuggestedDinnerID = new Random().nextInt(allDinners.size()) + 1;
+        dinnerTitle.setText(dr.getDinner(currentlySuggestedDinnerID).getName());
+        dinnerDescription.setText(dr.getDinner(currentlySuggestedDinnerID).getDescription());
+        dinnerRating.setRating(dr.getDinner(currentlySuggestedDinnerID).getRating());
+        dinnerCategory.setText(dr.getDinner(currentlySuggestedDinnerID).getCuisine());
+
+
+        List<Integer> ingredientIDList = dr.getDinner(currentlySuggestedDinnerID).getIngredientID();
+        List<Ingredient> ingredientList = new ArrayList<>();
+        //Find the ingredients by ingredientsID. TODO: This should probably be handled by IngredientRepository or the DinnerRepository.
+        for(int i : ingredientIDList) {
+            ingredientList.add(ir.getIngredient(i));
+        }
+        IngredientGridAdapter iga = new IngredientGridAdapter(this, ingredientList);
+        GridView gridView = (GridView) findViewById(R.id.home_dinner_gridview);
+        gridView.setAdapter(iga);
     }
 
     @Override
@@ -135,5 +186,55 @@ public class HomeActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void populateDB() {
+        DatabaseHelper dbHelper = new DatabaseHelper(this.getApplicationContext());
+        ContentValues cv = new ContentValues();
+        cv.put(Dinner.KEY_NAME, "Sandwich");
+        cv.put(Dinner.KEY_DESCRIPTION, "Make me a sandwich");
+        cv.put(Dinner.KEY_INGREDIENTS_ID, "1, 2, 3");
+        cv.put(Dinner.KEY_RATING, 3);
+        cv.put(Dinner.KEY_CUISINE, "Waifu food");
+        dbHelper.getWritableDatabase().insert(Dinner.TABLE_NAME, null, cv);
+
+        cv.clear();
+        cv.put(Dinner.KEY_NAME, "Bacon Cheese Burger");
+        cv.put(Dinner.KEY_DESCRIPTION, "I can haz cheez?");
+        cv.put(Dinner.KEY_INGREDIENTS_ID, "2, 3, 1");
+        cv.put(Dinner.KEY_RATING, 3);
+        cv.put(Dinner.KEY_CUISINE, "Cat food");
+        dbHelper.getWritableDatabase().insert(Dinner.TABLE_NAME, null, cv);
+
+        cv.clear();
+
+        cv.put(Dinner.KEY_NAME, "Steak");
+        cv.put(Dinner.KEY_DESCRIPTION, "Man food");
+        cv.put(Dinner.KEY_INGREDIENTS_ID, "1");
+        cv.put(Dinner.KEY_RATING, 3);
+        cv.put(Dinner.KEY_CUISINE, "Le french");
+        dbHelper.getWritableDatabase().insert(Dinner.TABLE_NAME, null, cv);
+
+        cv.clear();
+        cv.put(Ingredient.KEY_NAME, "Chili");
+        cv.put(Ingredient.KEY_DESCRIPTION, "Hot as my waifu");
+        cv.put(Ingredient.KEY_CATEGORY, "Spice");
+        dbHelper.getWritableDatabase().insert(Ingredient.TABLE_NAME, null, cv);
+
+
+        cv.clear();
+        cv.put(Ingredient.KEY_NAME, "Onion");
+        cv.put(Ingredient.KEY_DESCRIPTION, "Makes you sad :(");
+        cv.put(Ingredient.KEY_CATEGORY, "Vegetable");
+        dbHelper.getWritableDatabase().insert(Ingredient.TABLE_NAME, null, cv);
+
+        cv.clear();
+        cv.put(Ingredient.KEY_NAME, "Potato");
+        cv.put(Ingredient.KEY_DESCRIPTION, "Stuff the Irish likes");
+        cv.put(Ingredient.KEY_CATEGORY, "Vegetable");
+        dbHelper.getWritableDatabase().insert(Ingredient.TABLE_NAME, null, cv);
+
+        cv.clear();
+        System.out.println("Database populated");
     }
 }
