@@ -20,7 +20,11 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -62,28 +66,9 @@ public class HomeActivity extends AppCompatActivity
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        // populateDB();
+
+        //populateDB();
         getNewDinnerSuggestion();
-
-
-
-
-        /*
-        TextView ingredient1 = (TextView) findViewById(R.id.home_dinner_ingredient);
-        ingredient1.setText(ir.getIngredient(dr.getDinner(1).getIngredientID().get(0)).getName());
-
-        RelativeLayout rl = (RelativeLayout) findViewById(R.id.content_home_rlayout);
-        LinearLayout llayout = (LinearLayout) findViewById(R.id.content_home_llayout);
-        for(int i = 0; i <= 5; i++) {
-            LinearLayout ll = new LinearLayout(this);
-            ll.setOrientation(LinearLayout.VERTICAL);
-            TextView tv = new TextView(this);
-            tv.setTextAppearance(this, android.R.style.TextAppearance_Large);
-            tv.setText(dr.getDinner(1).getName());
-            ll.addView(tv);
-            llayout.addView(ll);
-        }
-        */
     }
 
     private void getNewDinnerSuggestion() {
@@ -100,13 +85,14 @@ public class HomeActivity extends AppCompatActivity
         //Get a random suggestion
         List<Dinner> allDinners = dr.getAllDinners();
         currentlySuggestedDinnerID = new Random().nextInt(allDinners.size()) + 1;
-        dinnerTitle.setText(dr.getDinner(currentlySuggestedDinnerID).getName());
-        dinnerDescription.setText(dr.getDinner(currentlySuggestedDinnerID).getDescription());
-        dinnerRating.setRating(dr.getDinner(currentlySuggestedDinnerID).getRating());
-        dinnerCategory.setText(dr.getDinner(currentlySuggestedDinnerID).getCuisine());
+        Dinner d = dr.getDinner(currentlySuggestedDinnerID);
+        dinnerTitle.setText(d.getName());
+        dinnerDescription.setText(d.getDescription());
+        dinnerRating.setRating(d.getRating());
+        dinnerCategory.setText(d.getCuisine());
 
 
-        List<Integer> ingredientIDList = dr.getDinner(currentlySuggestedDinnerID).getIngredientID();
+        List<Integer> ingredientIDList = d.getIngredientID();
         List<Ingredient> ingredientList = new ArrayList<>();
         //Find the ingredients by ingredientsID. TODO: This should probably be handled by IngredientRepository or the DinnerRepository.
         for(int i : ingredientIDList) {
@@ -191,28 +177,37 @@ public class HomeActivity extends AppCompatActivity
     private void populateDB() {
         DatabaseHelper dbHelper = new DatabaseHelper(this.getApplicationContext());
         ContentValues cv = new ContentValues();
-        cv.put(Dinner.KEY_NAME, "Sandwich");
-        cv.put(Dinner.KEY_DESCRIPTION, "Make me a sandwich");
-        cv.put(Dinner.KEY_INGREDIENTS_ID, "1, 2, 3");
-        cv.put(Dinner.KEY_RATING, 3);
-        cv.put(Dinner.KEY_CUISINE, "Waifu food");
+
+        Calendar cal = Calendar.getInstance();
+        cal.clear();
+        cal.set(2015, 10, 8);
+        cv.put(Dinner.KEY_NAME, "Sandwich" );
+        cv.put(Dinner.KEY_DESCRIPTION, "Make me a sandwich" );
+        cv.put(Dinner.KEY_INGREDIENTS_ID, "1, 2, 3" );
+        cv.put(Dinner.KEY_RATING, 2);
+        cv.put(Dinner.KEY_CUISINE, "Waifu food" );
+        cv.put(Dinner.KEY_DATE, new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime()));
         dbHelper.getWritableDatabase().insert(Dinner.TABLE_NAME, null, cv);
 
         cv.clear();
-        cv.put(Dinner.KEY_NAME, "Bacon Cheese Burger");
-        cv.put(Dinner.KEY_DESCRIPTION, "I can haz cheez?");
-        cv.put(Dinner.KEY_INGREDIENTS_ID, "2, 3, 1");
+        cal.clear();
+        cal.set(2015, 11, 9);
+        cv.put(Dinner.KEY_NAME, "Bacon Cheese Burger" );
+        cv.put(Dinner.KEY_DESCRIPTION, "I can haz cheez?" );
+        cv.put(Dinner.KEY_INGREDIENTS_ID, "2, 3, 1" );
         cv.put(Dinner.KEY_RATING, 3);
-        cv.put(Dinner.KEY_CUISINE, "Cat food");
+        cv.put(Dinner.KEY_CUISINE, "Cat food" );
+        cv.put(Dinner.KEY_DATE, new SimpleDateFormat("yyyy-MM-dd" ).format(cal.getTime()));
         dbHelper.getWritableDatabase().insert(Dinner.TABLE_NAME, null, cv);
 
         cv.clear();
-
-        cv.put(Dinner.KEY_NAME, "Steak");
+        cal.clear();
+        cv.put(Dinner.KEY_NAME, "Steak" );
         cv.put(Dinner.KEY_DESCRIPTION, "Man food");
         cv.put(Dinner.KEY_INGREDIENTS_ID, "1");
-        cv.put(Dinner.KEY_RATING, 3);
+        cv.put(Dinner.KEY_RATING, 5);
         cv.put(Dinner.KEY_CUISINE, "Le french");
+        cv.put(Dinner.KEY_DATE, new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
         dbHelper.getWritableDatabase().insert(Dinner.TABLE_NAME, null, cv);
 
         cv.clear();

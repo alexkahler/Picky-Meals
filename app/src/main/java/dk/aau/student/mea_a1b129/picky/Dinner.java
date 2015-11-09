@@ -1,6 +1,7 @@
 package dk.aau.student.mea_a1b129.picky;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /*
@@ -15,6 +16,7 @@ public class Dinner {
     public static final String KEY_CUISINE = "cuisine";
     public static final String KEY_INGREDIENTS_ID = "ingredients_id";
     public static final String KEY_RATING = "rating";
+    public static final String KEY_DATE = "date";
 
     private int dinnerID;
     private String name;
@@ -22,8 +24,11 @@ public class Dinner {
     private String cuisine;
     private int rating;
     private List<Integer> ingredientID = new ArrayList<>();
+    private Date date;
 
-    
+    public Dinner() {
+
+    }
 
     public void setDinnerID(int id) {
         dinnerID = id;
@@ -80,5 +85,13 @@ public class Dinner {
 
     public List<Integer> getIngredientID() {
         return ingredientID;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 }

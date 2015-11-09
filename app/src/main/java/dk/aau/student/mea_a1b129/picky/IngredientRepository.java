@@ -3,10 +3,14 @@ package dk.aau.student.mea_a1b129.picky;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * IngredientRepository to store all of the ingredients used in recipes.
+ */
 public class IngredientRepository {
 
     private DatabaseHelper dbHelper;
@@ -30,6 +34,7 @@ public class IngredientRepository {
         cv.put(Ingredient.KEY_NAME, name);
         cv.put(Ingredient.KEY_CATEGORY, category);
         cv.put(Ingredient.KEY_DESCRIPTION, description);
+        Log.d("SQL", "IngredientRepository: insertIngredient() Accessing database");
         dbHelper.getWritableDatabase().insert(Ingredient.TABLE_NAME, null, cv);
         return true;
     }
@@ -45,6 +50,7 @@ public class IngredientRepository {
         cv.put(Ingredient.KEY_CATEGORY, category);
         cv.put(Ingredient.KEY_DESCRIPTION, description);
         try {
+            Log.d("SQL", "IngredientRepository: updateIngredientsTag() Accessing database");
             dbHelper.getWritableDatabase().update(Ingredient.TABLE_NAME, cv, Ingredient.KEY_ID + " = ? ", new String[]{Integer.toString(id)});
             return true;
         } catch(NumberFormatException e) {
@@ -63,6 +69,7 @@ public class IngredientRepository {
      */
     public Ingredient getIngredient(int id) {
         Ingredient i = new Ingredient();
+        Log.d("SQL", "IngredientRepository: getIngredient() Accessing database");
         Cursor result = dbHelper.getReadableDatabase().rawQuery("SELECT * FROM " + Ingredient.TABLE_NAME + " WHERE " +
                 Ingredient.KEY_ID + " = ?", new String[]{Integer.toString(id)});
         
@@ -85,6 +92,7 @@ public class IngredientRepository {
      */
     public List<Ingredient> getAllIngredients() {
         List<Ingredient> ingredientList = new ArrayList<>();
+        Log.d("SQL", "IngredientRepository: getAllIngredients() Accessing database");
         Cursor results = dbHelper.getReadableDatabase().rawQuery(
                 "SELECT * FROM " + Ingredient.TABLE_NAME, null);
         if (results.moveToFirst()) {
@@ -114,6 +122,7 @@ public class IngredientRepository {
      * @param id The id of the ingredient that needs to be deleted.
      */
     public Integer deleteIngredient(int id) {
+        Log.d("SQL", "IngredientRepository: deleteIngredient() Accessing database " + this.toString());
         return dbHelper.getWritableDatabase().delete(Ingredient.TABLE_NAME, Ingredient.KEY_ID + " = ? ",
                 new String[]{Integer.toString(id)});
     }

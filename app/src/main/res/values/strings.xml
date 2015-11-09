@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Picky</string>
+    <string name="app_name">Dish\'it</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -16,7 +16,14 @@
     <string name="nav_preferences">Preferences</string>
     <string name="nav_settings">Settings</string>
 
+    <!-- Content Home strings -->
+    <string name="home_dinner_new_suggestion_button">New Suggestion</string>
 
+    <!-- Content Dinner History strings -->
+    <string name="dinner_history_clear_filter_button">Clear Filter</string>
+    <string name="dinner_history_filter_from">Filter From:</string>
+    <string name="dinner_history_filter_to">Filter To:</string>
+    <string name="dinner_history_choose_date">Choose date</string>
     <!-- Statistics Activity strings -->
     <string name="title_activity_statistics">Statistics</string>
     <string name="large_text">
@@ -108,4 +115,8 @@
         "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
         "when a user tries to pick up one of cards.\n\n"
     </string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

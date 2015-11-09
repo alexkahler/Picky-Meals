@@ -8,6 +8,7 @@ public class Ingredient {
     public static final String KEY_NAME = "name";
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_CATEGORY = "category";
+    public enum CATEGORY {Meat, Poultry, Seafood, Vegetable, Herb, Spice, Fruit, Nuts_Seeds, Dairy, Cereal, Other} //TODO: Use enum values for consistency in ingredients tag categories.
 
     private String name;
     private String description;
@@ -15,7 +16,6 @@ public class Ingredient {
     private String category;
 
     public Ingredient() {
-
     }
 
     public Ingredient(String name, String description, String category, int id) {

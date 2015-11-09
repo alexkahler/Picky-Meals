@@ -6,8 +6,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /*
 Dinner repository to lookup dinners.
@@ -39,7 +45,9 @@ public class DinnerRepository {
         cv.put(Dinner.KEY_CUISINE, cuisine);
         cv.put(Dinner.KEY_INGREDIENTS_ID, ingredientsID);
         cv.put(Dinner.KEY_RATING, rating);
+        Log.d("SQL", "DinnerRepository, insertDinner() Accessing database");
         dbHelper.getWritableDatabase().insert(Dinner.TABLE_NAME, null, cv);
+        dbHelper.close();
         return true;
     }
 
@@ -52,6 +60,7 @@ public class DinnerRepository {
 
     public Dinner getDinner(int dinnerID) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Log.d("SQL", "Dinner Repository: getDinner() Accessing database");
         Cursor results = db.rawQuery("SELECT * FROM " + Dinner.TABLE_NAME + " WHERE " + Dinner.KEY_ID + " = ?", new String[]{Integer.toString(dinnerID)});
         Log.d("DinnerRepository", "Doing a query");
         if(results.moveToFirst()) {
@@ -66,16 +75,18 @@ public class DinnerRepository {
                     try {
                         d.addIngredients(Integer.parseInt(raw[i]));
                     } catch (NumberFormatException e) {
-                        System.out.println("Couldn't parseIn at Dinner.getDinner " + e.getMessage());
+                        Log.e("Error", "Couldn't parseIn at Dinner.getDinner " + e.getMessage());
                     }
                 }
             }
             while (results.moveToNext());
             results.close();
+            dbHelper.close();
             return d;
         }
         else {
             results.close();
+            dbHelper.close();
             return null;
         }
 
@@ -84,9 +95,13 @@ public class DinnerRepository {
 
     /**
      *Returns a list of meals - if no meals are found returns null.
+     * @return a List with type Dinner
+     * @see List
+     * @see Dinner
      */
     public List<Dinner> getAllDinners() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Log.d("SQL", "DinnerRepository.class, getAlleDinners() Accessing database");
         Cursor results = db.rawQuery("SELECT * FROM " + Dinner.TABLE_NAME, null);
         if(results.moveToFirst()) {
             List<Dinner> dinnerList = new ArrayList<>();
@@ -95,28 +110,39 @@ public class DinnerRepository {
                 try {
                     d.setDinnerID(Integer.parseInt(results.getString(results.getColumnIndex(Dinner.KEY_ID)))); }
                 catch(NumberFormatException e) {
-                    System.out.println("Couldn't format number at DinnerRepository.getAllDinners: " + e.toString());
+                    Log.e("DinnerRepository", "Couldn't format number at DinnerRepository.getAllDinners: " + e.toString());
                     return null;
                 }
                 d.setName(results.getString(results.getColumnIndex(Dinner.KEY_NAME)));
                 d.setDescription(results.getString(results.getColumnIndex(Dinner.KEY_DESCRIPTION)));
                 d.setCuisine(results.getString(results.getColumnIndex(Dinner.KEY_CUISINE)));
+                String t = results.getString(results.getColumnIndex(Dinner.KEY_DATE)); //TODO: Refactor
+                DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+                try {
+                    d.setDate(format.parse(t));
+                    System.out.println("Parsed the date object form database" + format.parse(t).toString());
+                } catch (ParseException e) {
+                    Log.e("ParseException", "Couldn't parse String to Date-object in DinnerRepository.getAllDinners()");
+                    e.printStackTrace();
+                }
                 String[] raw = results.getString(results.getColumnIndex(Dinner.KEY_INGREDIENTS_ID)).replaceAll("[^1-9,]", "").split(",");
                 for (int i = 0; i < raw.length; i++) {
                     try {
                         d.addIngredients(Integer.parseInt(raw[i]));
                     } catch(NumberFormatException e) {
-                        System.out.println("Couldn't parseInt at Dinner.getAllDinners " + e.toString());
+                        Log.e("DinnerRepository", "Couldn't parseInt at Dinner.getAllDinners " + e.toString());
                     }
                 }
                 dinnerList.add(d);
             }
             while (results.moveToNext());
             results.close();
+            db.close();
             return dinnerList;
         }
         else {
             results.close();
+            db.close();
             return null;
         }
     }

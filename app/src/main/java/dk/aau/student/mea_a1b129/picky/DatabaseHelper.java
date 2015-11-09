@@ -5,10 +5,10 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-/*
-Database helper to create and initiate connections to app database.
+/**
+ * Database helper to create and initiate connections to app database.
  */
-public class DatabaseHelper extends SQLiteOpenHelper {
+public class DatabaseHelper extends SQLiteOpenHelper { // TODO: Make singleton to escape memory leak.
     private static int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "Dishit.db";
 
@@ -34,8 +34,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         Dinner.KEY_DESCRIPTION + " TEXT, " +
                         Dinner.KEY_CUISINE + " TEXT, " +
                         Dinner.KEY_RATING + " INTEGER, " +
-                        Dinner.KEY_INGREDIENTS_ID + " TEXT)"
+                        Dinner.KEY_INGREDIENTS_ID + " TEXT, " +
+                        Dinner.KEY_DATE + " DATE)"
         );
+
+        //TODO: Make new table for enum values.
     }
 
     @Override
