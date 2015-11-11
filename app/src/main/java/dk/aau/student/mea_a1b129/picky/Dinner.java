@@ -1,5 +1,8 @@
 package dk.aau.student.mea_a1b129.picky;
 
+import android.support.annotation.NonNull;
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -8,7 +11,12 @@ import java.util.List;
 Dinner class for dinner objects to populate the app.
 TODO: Make a constructor method for Class.
  */
-public class Dinner {
+
+/**
+ * @author Aleksander Kähler, Group B129, Aalborg University
+ */
+public class Dinner implements Comparable {
+
     public static final String TABLE_NAME = "MealsTable";
     public static final String KEY_ID = "_id";
     public static final String KEY_NAME = "name";
@@ -93,5 +101,17 @@ public class Dinner {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    /**
+     * Compares one Dinner to another and returns which is newer.
+     * @param another Dinner object.
+     * @return an int < 0 if this Date is less than the specified Date, 0 if they are equal, and an int > 0 if this Date is greater
+     * @throws ClassCastException
+     */
+    @Override
+    public int compareTo(Object another) throws ClassCastException {
+        Dinner d = (Dinner) another;
+        return d.getDate().compareTo(getDate());
     }
 }

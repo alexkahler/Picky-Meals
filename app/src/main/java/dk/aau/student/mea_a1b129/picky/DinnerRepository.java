@@ -6,11 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -21,9 +19,16 @@ Dinner repository to lookup dinners.
 public class DinnerRepository {
 
     private DatabaseHelper dbHelper;
+    private List<Dinner> dinnerList;
 
+    /**
+     * Constructor for DinnerRepository. When initialized the class updates the latest list of dinners from the database.
+     * @param context Context of the application
+     */
     public DinnerRepository(Context context) {
         dbHelper = new DatabaseHelper(context);
+        dinnerList = new ArrayList<>();
+        updateDinnerList();
     }
 
     /**
@@ -35,7 +40,7 @@ public class DinnerRepository {
      * @param rating the meals rating
      * @return true if insert was successful
      */
-    public boolean insertDinner(String name, String description, String cuisine, int ingredientsID, int rating) {
+    public boolean insertDinner(String name, String description, String cuisine, List<Integer> ingredientsID, int rating, Date date) {
         ContentValues cv = new ContentValues();
         if(name !=null) {
             cv.put(Dinner.KEY_NAME, name); }
@@ -43,8 +48,9 @@ public class DinnerRepository {
             return false; }
         cv.put(Dinner.KEY_DESCRIPTION, description);
         cv.put(Dinner.KEY_CUISINE, cuisine);
-        cv.put(Dinner.KEY_INGREDIENTS_ID, ingredientsID);
+        cv.put(Dinner.KEY_INGREDIENTS_ID, ingredientsID.toString());
         cv.put(Dinner.KEY_RATING, rating);
+        cv.put(Dinner.KEY_DATE, new SimpleDateFormat("dd-MM-yyyy", new Locale("da", "DK")).format(date));
         Log.d("SQL", "DinnerRepository, insertDinner() Accessing database");
         dbHelper.getWritableDatabase().insert(Dinner.TABLE_NAME, null, cv);
         dbHelper.close();
@@ -59,10 +65,10 @@ public class DinnerRepository {
     }
 
     public Dinner getDinner(int dinnerID) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
         Log.d("SQL", "Dinner Repository: getDinner() Accessing database");
         Cursor results = db.rawQuery("SELECT * FROM " + Dinner.TABLE_NAME + " WHERE " + Dinner.KEY_ID + " = ?", new String[]{Integer.toString(dinnerID)});
-        Log.d("DinnerRepository", "Doing a query");
+        Log.d("DinnerRepository", "getDinner: Doing a query");
         if(results.moveToFirst()) {
             Dinner d = new Dinner();
             do {
@@ -71,7 +77,7 @@ public class DinnerRepository {
                 d.setCuisine(results.getString(results.getColumnIndex(Dinner.KEY_CUISINE)));
                 d.setRating(results.getInt(results.getColumnIndex(Dinner.KEY_RATING)));
                 String[] raw = results.getString(results.getColumnIndex(Dinner.KEY_INGREDIENTS_ID)).replaceAll("[^1-9,]", "").split(",");
-                for(int i = 0; i < raw.length; i++) {
+                for(int i = 0; i < raw.length; i++) { //TODO: Replace with foreach
                     try {
                         d.addIngredients(Integer.parseInt(raw[i]));
                     } catch (NumberFormatException e) {
@@ -94,56 +100,61 @@ public class DinnerRepository {
     }
 
     /**
-     *Returns a list of meals - if no meals are found returns null.
+     * Returns a list of meals - if no meals are found returns null.
      * @return a List with type Dinner
      * @see List
      * @see Dinner
      */
-    public List<Dinner> getAllDinners() {
+    public List<Dinner> getDinnerList() {
+        if(!dinnerList.isEmpty())   {
+            return dinnerList;
+        }
+        return null;
+    }
+
+    /**
+     * Updates the dinner list in the DinnerRepository. Do this if you've recently added new dinners to the database and want a refresh.
+     */
+    public void updateDinnerList() {
+        Log.d("DinnerRepository", "updateDinnerList");
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Log.d("SQL", "DinnerRepository.class, getAlleDinners() Accessing database");
         Cursor results = db.rawQuery("SELECT * FROM " + Dinner.TABLE_NAME, null);
         if(results.moveToFirst()) {
-            List<Dinner> dinnerList = new ArrayList<>();
+            dinnerList = new ArrayList<>();
             do {
                 Dinner d = new Dinner();
                 try {
                     d.setDinnerID(Integer.parseInt(results.getString(results.getColumnIndex(Dinner.KEY_ID)))); }
                 catch(NumberFormatException e) {
-                    Log.e("DinnerRepository", "Couldn't format number at DinnerRepository.getAllDinners: " + e.toString());
-                    return null;
+                    Log.e("DinnerRepository", "Couldn't format number at DinnerRepository.getDinnerList: " + e.toString());
+                    break; //ID must be set otherwise break from loop.
                 }
                 d.setName(results.getString(results.getColumnIndex(Dinner.KEY_NAME)));
                 d.setDescription(results.getString(results.getColumnIndex(Dinner.KEY_DESCRIPTION)));
                 d.setCuisine(results.getString(results.getColumnIndex(Dinner.KEY_CUISINE)));
-                String t = results.getString(results.getColumnIndex(Dinner.KEY_DATE)); //TODO: Refactor
-                DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+
                 try {
-                    d.setDate(format.parse(t));
-                    System.out.println("Parsed the date object form database" + format.parse(t).toString());
+                    d.setDate(new SimpleDateFormat("dd-MM-yyyy", new Locale("da", "DK"))
+                            .parse(results.getString(results.getColumnIndex(Dinner.KEY_DATE))));
+                    //System.out.println("Parsed the date object form database" + format.parse(t).toString());
                 } catch (ParseException e) {
-                    Log.e("ParseException", "Couldn't parse String to Date-object in DinnerRepository.getAllDinners()");
-                    e.printStackTrace();
+                    Log.e("ParseException", "Couldn't parse String to Date-object in DinnerRepository.getDinnerList()");
                 }
+
                 String[] raw = results.getString(results.getColumnIndex(Dinner.KEY_INGREDIENTS_ID)).replaceAll("[^1-9,]", "").split(",");
-                for (int i = 0; i < raw.length; i++) {
+                for (int i = 0; i < raw.length; i++) { //TODO: Replace with foreach loop
                     try {
                         d.addIngredients(Integer.parseInt(raw[i]));
                     } catch(NumberFormatException e) {
-                        Log.e("DinnerRepository", "Couldn't parseInt at Dinner.getAllDinners " + e.toString());
+                        Log.e("DinnerRepository", "Couldn't parseInt at Dinner.getDinnerList " + e.toString());
                     }
                 }
                 dinnerList.add(d);
             }
             while (results.moveToNext());
-            results.close();
-            db.close();
-            return dinnerList;
         }
-        else {
-            results.close();
-            db.close();
-            return null;
-        }
+        results.close();
+        db.close();
+        dbHelper.close();
     }
 }

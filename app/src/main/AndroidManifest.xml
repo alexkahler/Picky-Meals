@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="dk.aau.student.mea_a1b129.picky" >
 
+    <!-- To access Google+ APIs: -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -29,9 +32,27 @@
         </activity>
         <activity
             android:name=".DinnerHistory"
-            android:label="History"
+            android:label="Dinner History"
             android:parentActivityName=".HomeActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="dk.aau.student.mea_a1b129.picky.HomeActivity" />
+        </activity>
+        <activity
+            android:name=".AddDinnerActivity"
+            android:label="Add a new dinner"
+            android:parentActivityName=".DinnerHistory"
+            android:theme="@style/AppTheme.NoActionBar" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="dk.aau.student.mea_a1b129.picky.AddDinnerActivity" />
+        </activity>
+        <activity
+            android:name=".PreferencesActivity"
+            android:label="@string/title_activity_preferences"
+            android:parentActivityName=".HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="dk.aau.student.mea_a1b129.picky.HomeActivity" />

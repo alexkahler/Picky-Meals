@@ -65,4 +65,9 @@ public class Ingredient {
     public void setIngredientsID(int ingredientsID) {
         this.ingredientsID = ingredientsID;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

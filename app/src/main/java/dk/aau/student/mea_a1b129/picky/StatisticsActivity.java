@@ -14,16 +14,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-public class StatisticsActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class StatisticsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.drawer_statistics_activity);
+        setContentView(R.layout.activity_statistics);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.statistics_toolbar);
         setSupportActionBar(toolbar);
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.statistics_fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -33,64 +35,5 @@ public class StatisticsActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-
-
     }
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_home) {
-            Intent intent = new Intent(this, HomeActivity.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_dinner_history) {
-            //log food to diary
-        } else if (id == R.id.nav_dinner_plan) {
-            //overview of the coming weeks meals.
-        } else if (id == R.id.nav_statistics) {
-            Intent intent = new Intent(this, StatisticsActivity.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_feedback) {
-            Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_SEND);
-            intent.setType("message/rfc822");
-            intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"mda15@student.aau.dk"});
-            intent.putExtra(Intent.EXTRA_SUBJECT, "Picky Feedback");
-            if (intent.resolveActivity(getPackageManager()) != null) {
-                startActivity(intent);
-            }
-        } else if (id == R.id.nav_preferences) {
-
-
-        } else if (id == R.id.nav_settings) {
-            Toast.makeText(getApplicationContext(), "Coming soon.", Toast.LENGTH_SHORT).show();
-        }
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
 }

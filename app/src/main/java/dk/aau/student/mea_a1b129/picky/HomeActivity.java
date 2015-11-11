@@ -4,7 +4,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -20,17 +20,16 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    private int currentlySuggestedDinnerID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,11 +49,11 @@ public class HomeActivity extends AppCompatActivity
 
         //Floating action button.
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        fab.setOnClickListener(new View.OnClickListener() { //TODO: Add dinner to log when FAB is clicked.
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent i = new Intent(getApplicationContext(), AddDinnerActivity.class);
+                startActivity(i);
             }
         });
 
@@ -82,15 +81,22 @@ public class HomeActivity extends AppCompatActivity
         RatingBar dinnerRating = (RatingBar) findViewById(R.id.home_dinner_rating);
         TextView dinnerCategory = (TextView) findViewById(R.id.home_dinner_category);
 
-        //Get a random suggestion
-        List<Dinner> allDinners = dr.getAllDinners();
-        currentlySuggestedDinnerID = new Random().nextInt(allDinners.size()) + 1;
-        Dinner d = dr.getDinner(currentlySuggestedDinnerID);
+        //Get a random suggestion TODO: Make Algorithm class for Dinner suggestions.
+        List<Dinner> allDinners = dr.getDinnerList();
+        Dinner d;
+        if(allDinners == null) {
+            d = new Dinner();
+            d.setName("No dinners in your log :(");
+        }
+        else {
+            int currentlySuggestedDinnerID = allDinners.get(new Random().nextInt(allDinners.size())).getDinnerID();
+            Log.d("HomeActivity", "DinnerID suggested: " + currentlySuggestedDinnerID);
+            d = dr.getDinner(currentlySuggestedDinnerID);
+        }
         dinnerTitle.setText(d.getName());
         dinnerDescription.setText(d.getDescription());
         dinnerRating.setRating(d.getRating());
         dinnerCategory.setText(d.getCuisine());
-
 
         List<Integer> ingredientIDList = d.getIngredientID();
         List<Ingredient> ingredientList = new ArrayList<>();
@@ -137,19 +143,19 @@ public class HomeActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    //TODO move onNavigationItemSelected into own super class and extend all activities from super class menu.
+    //TODO move onNavigationItemSelected into own super class (or interface?) and implement all activities from super class menu.
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            Intent intent = new Intent(this, HomeActivity.class);
-            startActivity(intent);
+            //Intent intent = new Intent(this, HomeActivity.class);
+            //startActivity(intent);
         } else if (id == R.id.nav_dinner_history) {
             Intent intent = new Intent(this, DinnerHistory.class);
             startActivity(intent);
         } else if (id == R.id.nav_dinner_plan) {
-            //TODO:
+            //TODO: Make dinner plan Activity
             Toast.makeText(getApplicationContext(), "Coming soon.", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_statistics) {
             Intent intent = new Intent(this, StatisticsActivity.class);
@@ -164,9 +170,11 @@ public class HomeActivity extends AppCompatActivity
                 startActivity(intent);
             }
         } else if (id == R.id.nav_preferences) {
-            //TODO make preferences Activity
+            Intent i = new Intent(this, PreferencesActivity.class);
+            startActivity(i);
 
         } else if (id == R.id.nav_settings) {
+            //TODO: Make settings Activity
             Toast.makeText(getApplicationContext(), "Coming soon.", Toast.LENGTH_SHORT).show();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -180,24 +188,24 @@ public class HomeActivity extends AppCompatActivity
 
         Calendar cal = Calendar.getInstance();
         cal.clear();
-        cal.set(2015, 10, 8);
-        cv.put(Dinner.KEY_NAME, "Sandwich" );
+        cal.set(2015, 10, 8); //yyyy, MM, dd
+        cv.put(Dinner.KEY_NAME, "Sandwich");
         cv.put(Dinner.KEY_DESCRIPTION, "Make me a sandwich" );
         cv.put(Dinner.KEY_INGREDIENTS_ID, "1, 2, 3" );
         cv.put(Dinner.KEY_RATING, 2);
         cv.put(Dinner.KEY_CUISINE, "Waifu food" );
-        cv.put(Dinner.KEY_DATE, new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime()));
+        cv.put(Dinner.KEY_DATE, new SimpleDateFormat("dd-MM-yyyy", new Locale("da", "DK")).format(cal.getTime()));
         dbHelper.getWritableDatabase().insert(Dinner.TABLE_NAME, null, cv);
 
         cv.clear();
         cal.clear();
-        cal.set(2015, 11, 9);
-        cv.put(Dinner.KEY_NAME, "Bacon Cheese Burger" );
+        cal.set(2015, 11, 9); //yyyy, MM, dd
+        cv.put(Dinner.KEY_NAME, "Bacon Cheese Burger");
         cv.put(Dinner.KEY_DESCRIPTION, "I can haz cheez?" );
         cv.put(Dinner.KEY_INGREDIENTS_ID, "2, 3, 1" );
         cv.put(Dinner.KEY_RATING, 3);
         cv.put(Dinner.KEY_CUISINE, "Cat food" );
-        cv.put(Dinner.KEY_DATE, new SimpleDateFormat("yyyy-MM-dd" ).format(cal.getTime()));
+        cv.put(Dinner.KEY_DATE, new SimpleDateFormat("dd-MM-yyyy", new Locale("da", "DK")).format(cal.getTime()));
         dbHelper.getWritableDatabase().insert(Dinner.TABLE_NAME, null, cv);
 
         cv.clear();
@@ -207,7 +215,7 @@ public class HomeActivity extends AppCompatActivity
         cv.put(Dinner.KEY_INGREDIENTS_ID, "1");
         cv.put(Dinner.KEY_RATING, 5);
         cv.put(Dinner.KEY_CUISINE, "Le french");
-        cv.put(Dinner.KEY_DATE, new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+        cv.put(Dinner.KEY_DATE, new SimpleDateFormat("dd-MM-yyyy", new Locale("da", "DK")).format(new Date()));
         dbHelper.getWritableDatabase().insert(Dinner.TABLE_NAME, null, cv);
 
         cv.clear();

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:showIn="@layout/activity_add_dinner"
+    tools:context="dk.aau.student.mea_a1b129.picky.AddDinnerActivity">
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/add_dinner_scrollview"
+        android:layout_above="@+id/add_dinner_horizontal_layout"
+        android:layout_alignParentTop="true">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="0dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/add_dinner_name"
+                android:id="@+id/add_dinner_dinner_name"
+                android:layout_alignParentStart="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/add_dinner_obligatory"
+                android:id="@+id/textView3"
+                android:layout_alignTop="@+id/add_dinner_dinner_name"
+                android:layout_toEndOf="@+id/add_dinner_dinner_name"
+                android:layout_marginLeft="10dp"
+                android:textColor="#ff0000"
+                android:textSize="10sp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/add_dinner_edit_dinner_name"
+                android:layout_below="@+id/add_dinner_dinner_name"
+                android:layout_alignParentStart="true"
+                android:hint="@string/add_dinner_edit_dinner_name" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/add_dinner_description"
+                android:id="@+id/add_dinner_dinner_description"
+                android:layout_below="@+id/add_dinner_edit_category"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="5dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/add_dinner_edit_dinner_description"
+                android:layout_below="@+id/add_dinner_dinner_description"
+                android:layout_alignParentStart="true"
+                android:hint="@string/add_dinner_edit_dinner_description" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:id="@+id/add_dinner_dinner_category"
+                android:text="@string/add_dinner_category"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/add_dinner_edit_dinner_name"
+                android:layout_marginTop="5dp" />
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/add_dinner_edit_category"
+                android:layout_below="@+id/add_dinner_dinner_category"
+                android:layout_alignParentStart="true"
+                android:hint="@string/add_dinner_edit_category" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/add_dinner_rating"
+                android:id="@+id/add_dinner_rating"
+                android:layout_below="@+id/add_dinner_edit_dinner_description"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="5dp" />
+
+            <RatingBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/add_dinner_edit_rating"
+                android:layout_below="@+id/add_dinner_rating"
+                android:layout_alignParentStart="false"
+                android:layout_centerInParent="true"
+                android:numStars="5"
+                android:layout_alignParentRight="false" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/add_dinner_choose_date_button"
+                android:layout_below="@+id/add_dinner_edit_rating"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="5dp"
+                android:text="@string/add_dinner_choose_date_button"
+                style="@style/Base.Widget.AppCompat.Button.Small" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:id="@+id/add_dinner_date_chosen"
+                android:layout_alignBottom="@+id/add_dinner_choose_date_button"
+                android:layout_alignParentEnd="true"
+                android:layout_marginBottom="15dp" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/add_dinner_choose_ingredients"
+                android:id="@+id/add_dinner_choose_ingredients"
+                android:layout_below="@+id/add_dinner_choose_date_button"
+                android:layout_alignParentStart="true"
+                style="@style/Base.Widget.AppCompat.Button.Small" />
+
+        </RelativeLayout>
+    </ScrollView>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentBottom="true"
+        android:gravity="right"
+        style="@style/Widget.AppCompat.ButtonBar"
+        android:layout_gravity="bottom"
+        android:id="@+id/add_dinner_horizontal_layout">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_dinner_cancel_button"
+            android:id="@+id/add_dinner_cancel_button"
+            style="@style/Base.Widget.AppCompat.Button.Borderless" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_dinner_save_button"
+            android:id="@+id/add_dinner_save_button"
+            style="@style/Base.Widget.AppCompat.Button.Borderless.Colored" />
+    </LinearLayout>
+</RelativeLayout>

@@ -24,6 +24,25 @@
     <string name="dinner_history_filter_from">Filter From:</string>
     <string name="dinner_history_filter_to">Filter To:</string>
     <string name="dinner_history_choose_date">Choose date</string>
+    <string name="error_date_after_current_date">Error: Can\'t set date after current date.</string>
+    <string name="error_filterFrom_after_filterTo">Error: "Filter From" can\'t be after "Filter To"</string>
+    <string name="error_filterTo_before_filterFrom">Error: "Filter To" can\'t be before "Filter From"</string>
+
+    <!-- Activity Add Dinner strings -->
+    <string name="add_dinner_title">Add a new dinner</string>
+    <string name="add_dinner_name">Dinner Name:\*</string>
+    <string name="add_dinner_obligatory">\*obligatory</string>
+    <string name="add_dinner_edit_dinner_name">Enter the name of the dinner...</string>
+    <string name="add_dinner_description">Dinner Description:</string>
+    <string name="add_dinner_edit_dinner_description">Enter a description of the dinner...</string>
+    <string name="add_dinner_category">Dinner Category:</string>
+    <string name="add_dinner_edit_category">Enter a category...</string>
+    <string name="add_dinner_rating">Rate the Dinner:</string>
+    <string name="add_dinner_choose_date_button">Choose a Date:</string>
+    <string name="add_dinner_save_button">Save Dinner</string>
+    <string name="add_dinner_cancel_button">Cancel</string>
+    <string name="add_dinner_choose_ingredients">Choose Ingredients:</string>
+
     <!-- Statistics Activity strings -->
     <string name="title_activity_statistics">Statistics</string>
     <string name="large_text">
@@ -115,8 +134,8 @@
         "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
         "when a user tries to pick up one of cards.\n\n"
     </string>
+    <string name="title_activity_preferences">Preferences</string>
 
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
+    <!-- Preferences Activity strings -->
+    <string name="preferences_title">Preferences</string>
 </resources>
