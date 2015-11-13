@@ -1,7 +1,6 @@
 package dk.aau.student.mea_a1b129.picky;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,12 +37,12 @@ public class Dinner implements Comparable {
 
     }
 
-    public void setDinnerID(int id) {
-        dinnerID = id;
-    }
-
     public int getDinnerID() {
         return dinnerID;
+    }
+
+    public void setDinnerID(int id) {
+        dinnerID = id;
     }
 
     public String getName() {
@@ -110,7 +109,7 @@ public class Dinner implements Comparable {
      * @throws ClassCastException
      */
     @Override
-    public int compareTo(Object another) throws ClassCastException {
+    public int compareTo(@NonNull Object another) throws ClassCastException {
         Dinner d = (Dinner) another;
         return d.getDate().compareTo(getDate());
     }

@@ -27,6 +27,13 @@
     <string name="error_date_after_current_date">Error: Can\'t set date after current date.</string>
     <string name="error_filterFrom_after_filterTo">Error: "Filter From" can\'t be after "Filter To"</string>
     <string name="error_filterTo_before_filterFrom">Error: "Filter To" can\'t be before "Filter From"</string>
+    <string name="dinner_list_item_date_pretext">""</string>
+    <string name="dinner_history_delete_dinner_title">Delete Dinner?</string>
+    <string name="dinner_history_delete_dinner_message_pt1">Do you wish to delete</string>
+    <!-- Dinner name goes between pt1 and pt2 -->
+    <string name="dinner_history_delete_dinner_message_pt2">from your log?</string>
+    <string name="dinner_history_delete_dinner_OK">Yes</string>
+    <string name="dinner_history_delete_dinner_cancel">No</string>
 
     <!-- Activity Add Dinner strings -->
     <string name="add_dinner_title">Add a new dinner</string>
@@ -138,4 +145,24 @@
 
     <!-- Preferences Activity strings -->
     <string name="preferences_title">Preferences</string>
+
+    <!-- Dialog Fragment strings -->
+    <string name="dialog_title">Choose Ingredient</string>
+    <string name="dialog_cancel_button">Cancel</string>
+    <string name="dialog_confirm_button">Confirm</string>
+    <string name="dialog_add_ingredient_button">+Add new ingredient</string>
+
+    <!-- Enum values -->
+    <string name="enum_meat">Meat</string>
+    <string name="enum_poultry">Poultry</string>
+    <string name="enum_seafood">Seafood</string>
+    <string name="enum_vegetable">Vegetables</string>
+    <string name="enum_herb">Herbs</string>
+    <string name="enum_spice">Spices</string>
+    <string name="enum_fruit">Fruits</string>
+    <string name="enum_nuts">Nuts and Seeds</string>
+    <string name="enum_dairy">Dairy</string>
+    <string name="enum_cereal">Cereal</string>
+    <string name="enum_other">Other</string>
+    <string name="enum_oil">Oil</string>
 </resources>

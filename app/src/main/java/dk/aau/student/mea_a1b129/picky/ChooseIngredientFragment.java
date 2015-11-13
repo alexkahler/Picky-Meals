@@ -1,44 +1,33 @@
 package dk.aau.student.mea_a1b129.picky;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.os.Bundle;
-import android.app.ListFragment;
+import android.support.annotation.Nullable;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ExpandableListView;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 
 /**
  * A fragment representing a list of Items.
- * <p/>
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
- * interface.
  */
-public class ChooseIngredientFragment extends ListFragment {
+public class ChooseIngredientFragment extends DialogFragment {
+    private static final String TAG = "ChooseIngredientFrag";
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-    private OnFragmentInteractionListener oil;
-    private IngredientRepository ir;
-
-
-    // TODO: Rename and change types of parameters
-    public static ChooseIngredientFragment newInstance(String param1, String param2) {
-        ChooseIngredientFragment fragment = new ChooseIngredientFragment();
-
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private ArrayList<Ingredient> chosenIngredients = new ArrayList<>();
+    private HashMap<Ingredient.Category, ArrayList<Boolean>> checkedState = new HashMap<>();
+    private DialogDoneListener listener;
+    private IngredientListAdapter ila;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -51,58 +40,108 @@ public class ChooseIngredientFragment extends ListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-        ir = new IngredientRepository(getActivity().getApplicationContext());
-        // TODO: Change Adapter to display your content
-        setListAdapter(new ArrayAdapter<Ingredient>(getActivity(),
-                android.R.layout.simple_list_item_1, android.R.id.text1, ir.getAllIngredients()));
     }
 
-
     @Override
-    @SuppressWarnings(value = "deprecation")
+    @SuppressWarnings("unchecked assignemt")
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        if (getArguments() != null) {
+            Log.d(TAG, "Found arguments!");
+            try {
+                chosenIngredients = (ArrayList) getArguments().getSerializable("ingredientsID");
+                Log.d(TAG, "chosenIngredient: " + chosenIngredients);
+                checkedState = (HashMap<Ingredient.Category, ArrayList<Boolean>>) getArguments().getSerializable("checkedState");
+                Log.d(TAG, "checkedState " + checkedState.isEmpty());
+            } catch (NullPointerException e) {
+                Log.e(TAG, "Couldn't get Bundle arguments from AddDinner " + e.toString());
+                e.printStackTrace();
+            } catch (Exception e) {
+                Log.e(TAG, "I caught an exception! Gotta catch em all!" + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+
         try {
-            oil = (OnFragmentInteractionListener) activity;
+            listener = (DialogDoneListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement DialogDoneListener");
         }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        oil = null;
+        listener = null;
     }
 
-    @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        super.onListItemClick(l, v, position, id);
 
-        if (null != oil) {
-            // Notify the active callbacks interface (the activity, if the
-            // fragment is attached to one) that an item has been selected.
-            oil.onFragmentInteraction(ir.getAllIngredients().get(position).getName());
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.dialog_ingredient_fragment, container);
+        Dialog dialog = getDialog();
+        dialog.setTitle(getResources().getString(R.string.dialog_title));
+
+
+        Button cancelButton = (Button) view.findViewById(R.id.dialog_cancel_button);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onDone(false, ila.getChosenIngredients(), (HashMap) ila.getCheckedState().clone());
+                Log.d(TAG, "checkedState: " + ila.getCheckedState().size());
+                dismiss();
+            }
+        });
+
+        Button confirmButton = (Button) view.findViewById(R.id.dialog_confirm_button);
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onDone(true, ila.getChosenIngredients(), (HashMap) ila.getCheckedState().clone());
+                Log.d(TAG, "checkedState: " + ila.getCheckedState().size());
+                dismiss();
+            }
+        });
+
+        updateIngredients(view);
+        return view;
+    }
+
+
+    private void updateIngredients(View view) {
+        IngredientRepository ir = new IngredientRepository(getActivity().getApplicationContext());
+        List<Ingredient> ingredientList = ir.getAllIngredients();
+        List<Ingredient.Category> ingredientCategories = new ArrayList<>(Arrays.asList(Ingredient.Category.values()));
+        HashMap<Ingredient.Category, List<Ingredient>> ingredients = new HashMap<>();
+        Log.v(TAG, "Size on ingredientList: " + ingredientList.size());
+        for (Ingredient.Category c : ingredientCategories) {
+            List<Ingredient> temp = new ArrayList<>();
+            for (Ingredient i : ingredientList) {
+                Log.v(TAG, "Comparing " + c.toString() + " to " + i.getCategory());
+                if (c.equals(i.getCategory())) {
+                    temp.add(i);
+                    Log.v(TAG, "Adding ingredient: " + i.toString());
+                }
+            }
+            if (temp.size() != 0) {
+                ingredients.put(c, temp);
+                Log.v(TAG, "Adding list " + temp.toString() + " " + c.toString());
+            }
+
+        }
+        ila = new IngredientListAdapter(getActivity().getApplicationContext(), ingredientCategories, ingredients, chosenIngredients, checkedState);
+        try {
+            ExpandableListView expandableListView = (ExpandableListView) view.findViewById(R.id.dialog_ingredient_listview);
+            expandableListView.setAdapter(ila);
+        } catch (NullPointerException e) {
+            Log.e(TAG, "Couldn't find expandableListView! " + e.toString());
+            e.printStackTrace();
         }
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(String IngredientName);
+    public interface DialogDoneListener {
+        void onDone(boolean status, ArrayList<Ingredient> chosenIngredients, HashMap<Ingredient.Category, ArrayList<Boolean>> checkedState);
     }
 }

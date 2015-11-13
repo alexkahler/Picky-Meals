@@ -1,22 +1,28 @@
 package dk.aau.student.mea_a1b129.picky;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 /**
  * Database helper to create and initiate connections to app database.
  */
 public class DatabaseHelper extends SQLiteOpenHelper { // TODO: Make singleton to escape memory leak.
-    private static int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "Dishit.db";
+    private static final String TAG = DatabaseHelper.class.getSimpleName();
+    private static int DATABASE_VERSION = 1;
+    private static DatabaseHelper sInstance;
 
-
-
-
-    public DatabaseHelper(Context context) {
+    private DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
+    public static synchronized DatabaseHelper getInstance(Context context) {
+        if (sInstance == null) {
+            sInstance = new DatabaseHelper(context.getApplicationContext());
+        }
+        return sInstance;
     }
 
     @Override
@@ -37,8 +43,7 @@ public class DatabaseHelper extends SQLiteOpenHelper { // TODO: Make singleton t
                         Dinner.KEY_INGREDIENTS_ID + " TEXT, " +
                         Dinner.KEY_DATE + " DATE)"
         );
-
-        //TODO: Make new table for enum values.
+        Log.v(TAG, "onCreate executed SQL");
     }
 
     @Override

@@ -1,32 +1,41 @@
 package dk.aau.student.mea_a1b129.picky;
 
 import android.app.DatePickerDialog;
-import android.support.v7.app.AppCompatActivity;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.support.v7.widget.Toolbar;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-public class AddDinnerActivity extends AppCompatActivity {
-
+/**
+ * @author Aleksander Kähler, Group B129, Aalborg University
+ */
+public class AddDinnerActivity extends AppCompatActivity implements ChooseIngredientFragment.DialogDoneListener {
+    private static final String TAG = "AddDinnerActivity";
     private EditText dinnerName, dinnerCategory, dinnerDescription;
     private Calendar dinnerDate;
     private TextView dateText;
     private RatingBar dinnerRating;
-    private Button chooseDate, saveButton, cancelButton;
+    private Button chooseDate, saveButton, cancelButton, chooseIngredientsButton;
     private DatePickerDialog datePickerDialog;
+    private ArrayList<Ingredient> ingredientList = new ArrayList<>();
+    private IngredientGridAdapter iga;
+    private HashMap<Ingredient.Category, ArrayList<Boolean>> checkedState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +49,7 @@ public class AddDinnerActivity extends AppCompatActivity {
 
         findViewsByID();
         assignListeners();
+        updateAdapter();
     }
 
     private void findViewsByID() {
@@ -54,6 +64,10 @@ public class AddDinnerActivity extends AppCompatActivity {
         chooseDate = (Button) findViewById(R.id.add_dinner_choose_date_button);
         saveButton = (Button) findViewById(R.id.add_dinner_save_button);
         cancelButton = (Button) findViewById(R.id.add_dinner_cancel_button);
+        chooseIngredientsButton = (Button) findViewById(R.id.add_dinner_choose_ingredients);
+
+
+
     }
 
     private void assignListeners() {
@@ -64,10 +78,15 @@ public class AddDinnerActivity extends AppCompatActivity {
                 if(dinnerName.getText().length() == 0) {
                     Toast.makeText(getApplicationContext(), "Please input a name for the dinner", Toast.LENGTH_SHORT).show();
                 } else {
+                    List<Integer> ingredientIDList = new ArrayList<>();
+                    for (Ingredient i : ingredientList) {
+                        ingredientIDList.add(i.getIngredientsID());
+                    }
                     dr.insertDinner(
                             dinnerName.getText().toString(),
                             dinnerDescription.getText().toString(),
-                            dinnerCategory.getText().toString(), new ArrayList<Integer>(Arrays.asList(1, 2, 3)),
+                            dinnerCategory.getText().toString(),
+                            ingredientIDList,
                             Math.round(dinnerRating.getRating()),
                             dinnerDate.getTime()
                     );
@@ -81,6 +100,25 @@ public class AddDinnerActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 onBackPressed();
+            }
+        });
+
+        chooseIngredientsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ChooseIngredientFragment cif = new ChooseIngredientFragment();
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.addToBackStack(null);
+                Log.d(TAG, "In onClick method assigning ingredients to Bundle. ingredientsList: " + ingredientList + " checkedState: " + checkedState);
+                if (!ingredientList.isEmpty()) {
+                    Log.d(TAG, "In if statement with ingredients list " + ingredientList);
+                    Bundle b = new Bundle();
+                    b.clear();
+                    b.putSerializable("ingredientsID", ingredientList);
+                    b.putSerializable("checkedState", checkedState);
+                    cif.setArguments(b);
+                }
+                cif.show(ft, "choose_ingredient_fragment");
             }
         });
 
@@ -101,5 +139,28 @@ public class AddDinnerActivity extends AppCompatActivity {
                 datePickerDialog.show();
             }
         });
+    }
+
+    public void updateAdapter() {
+        iga = new IngredientGridAdapter(getApplicationContext(), ingredientList);
+        GridView gridView = (GridView) findViewById(R.id.add_dinner_ingredient_gridview);
+        gridView.setAdapter(iga);
+        iga.notifyDataSetChanged();
+    }
+
+
+    @Override
+    public void onDone(boolean state, ArrayList<Ingredient> list, HashMap<Ingredient.Category, ArrayList<Boolean>> checkedState) {
+        Log.i("AddDinnerActivity", "Got list from fragment: " + list.toString());
+        if (state) {
+            ingredientList = new ArrayList<>();
+            Log.d(TAG, "Got checked state: " + checkedState);
+            ingredientList = list;
+            Log.d(TAG, "Updated ingredientList from fragment " + ingredientList);
+            this.checkedState = checkedState;
+            Log.d(TAG, "New checked state: " + this.checkedState);
+            updateAdapter();
+        }
+
     }
 }

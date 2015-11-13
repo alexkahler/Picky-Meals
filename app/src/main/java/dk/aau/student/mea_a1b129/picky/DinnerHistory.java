@@ -1,15 +1,16 @@
 package dk.aau.student.mea_a1b129.picky;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ListView;
@@ -23,24 +24,24 @@ import java.util.List;
 import java.util.Locale;
 
 /**
+ * @author Aleksander Kähler, Group B129, Aalborg University
  * DinnerHistory activity to show the latest food logs to user.
- * TODO: Compensate for toolbar in layout.
- * TODO: Implement filter logic to ListView.
  */
 public class DinnerHistory extends AppCompatActivity {
 
+    private static final String TAG = DinnerHistory.class.getSimpleName();
     private Calendar fromDate, toDate;
     private Button filterFromButton, filterToButton, clearFilterButton;
     private DatePickerDialog fromDatePickerDialog, toDatePickerDialog;
     private ListView listView;
-    private ArrayAdapter<String> adapter;
-    private List<Dinner> dinnerList;
+    private DinnerListAdapter adapter;
+    private DinnerRepository dr;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dinner_history);
-
         //Find the toolbar and set back button.
         Toolbar toolbar = (Toolbar) findViewById(R.id.dinner_history_toolbar);
         setSupportActionBar(toolbar);
@@ -57,11 +58,9 @@ public class DinnerHistory extends AppCompatActivity {
                 startActivity(i);
             }
         });
-
         findViewsByID();
         setOnClickListeners();
-        updateDinnerList();
-        populateViews();
+        populateListView();
     }
 
     /**
@@ -85,13 +84,11 @@ public class DinnerHistory extends AppCompatActivity {
 
         fromDatePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) { //TODO Optimize DatePickerDialogs - they slow down onCreate() process.
                 fromDate = Calendar.getInstance();
                 fromDate.set(year, monthOfYear, dayOfMonth);
                 if(toDate != null) { //If statement to test if from-filter date is after to-filter date.
-                    Log.d("DinnerHistory", "In if-statement onDateSet, toDate != null");
                     if(fromDate.after(toDate)) {
-                        Log.d("DinnerHistory", "In if-statement onDateSet: Making fromDate toast");
                         Toast.makeText(getApplicationContext(), getResources().getText(R.string.error_filterFrom_after_filterTo), Toast.LENGTH_SHORT).show();
                         return;
                     }
@@ -147,68 +144,84 @@ public class DinnerHistory extends AppCompatActivity {
         });
     }
 
-    private void populateViews() { //TODO: Make custom ArrayAdapter for ListView
-
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, updateDinnerList());
+    private void populateListView() {
+        adapter = new DinnerListAdapter(this.getApplicationContext(), updateDinnerList());
         listView.setAdapter(adapter);
 
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
-                //TODO: Implement edit dinner logic.
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                final int pos = position;
+                view.setSelected(true);
+
+                DialogInterface.OnClickListener alert = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case DialogInterface.BUTTON_NEGATIVE: {
+                                dialog.dismiss();
+                                break;
+                            }
+                            case DialogInterface.BUTTON_POSITIVE: {
+                                boolean isDeleted = dr.deleteDinner(((Dinner) adapter.getItem(pos)).getDinnerID());
+                                Log.i(TAG, "Dinner deleted: " + isDeleted);
+                                if (isDeleted) {
+                                    updateAdapter(updateDinnerList());
+                                }
+                            }
+                        }
+                    }
+                };
+                AlertDialog.Builder builder = new AlertDialog.Builder(DinnerHistory.this);
+                builder.setTitle(R.string.dinner_history_delete_dinner_title)
+                        .setMessage(getResources().getString(R.string.dinner_history_delete_dinner_message_pt1)
+                                + " " + ((Dinner) adapter.getItem(pos)).getName()
+                                + " " + getResources().getString(R.string.dinner_history_delete_dinner_message_pt2))
+                        .setPositiveButton(R.string.dinner_history_delete_dinner_OK, alert)
+                        .setNegativeButton(R.string.dinner_history_delete_dinner_cancel, alert)
+                        .show();
+
+                return true;
             }
         });
-
     }
 
-    private List<String> updateDinnerList() {
-        List<String> result = new ArrayList<>();
-        DinnerRepository dr = new DinnerRepository(this.getApplicationContext());
+    private List<Dinner> updateDinnerList() {
+        List<Dinner> result = new ArrayList<>();
+        dr = new DinnerRepository(this.getApplicationContext());
         List<Dinner> list = dr.getDinnerList();
         try {
             Collections.sort(list);
-        }
-        catch(ClassCastException e) {
-            Log.e("DinnerHistory", "Tried to Class Cast a wrong object");
         } catch(NullPointerException e) {
-            Log.e("DinnerHistory", "No date in Dinner object to compare to");
+            Log.e("DinnerHistory", "No date in Dinner object to compare to" + e.getMessage());
+            e.printStackTrace();
         }
+        Log.d(TAG, "I got a list with dinners! Rating of last meal in list: " + list.get(list.size() - 1).getRating());
+
+        //Only show Dinner between to and from dates chosen
         for(Dinner d : list) {
             if(toDate == null) {
-                Log.d("DinnerHistory", "In if toDate==null");
                 if(fromDate == null) {
-                    Log.d("DinnerHistory", "In if fromDate==null adding " +d.getName());
-                    result.add(d.getName());
+                    result.add(d);
                 }
                 else if (d.getDate().after(fromDate.getTime())) {
-                    Log.d("DinnerHistory", "In else if after(fromDate.getTime), adding " + d.getName());
-                    result.add(d.getName());
+                    result.add(d);
                 }
             }
             else if (d.getDate().before(toDate.getTime())) {
-                Log.d("DinnerHistory", "In else-if before(toDate.getTime)");
                 if(fromDate == null) {
-                    Log.d("DinnerHistory", "In if fromDate==null " + d.getName());
-                    result.add(d.getName());
+                    result.add(d);
                 }
                 else if (d.getDate().after(fromDate.getTime())) {
-                    Log.d("DinnerHistory", "In else-if after(fromDate.getTime), adding " + d.getName());
-                    result.add(d.getName());
+                    result.add(d);
                 }
             }
         }
         return result;
     }
 
-    private void updateAdapter(List<String> newData) {
-        adapter.clear();
-        if(newData != null) {
-            for(String s : newData) {
-                adapter.insert(s, adapter.getCount());
-            }
-        }
+    private void updateAdapter(List<Dinner> newData) {
+        adapter.updateDinnerList(newData);
         adapter.notifyDataSetChanged();
-
     }
 }

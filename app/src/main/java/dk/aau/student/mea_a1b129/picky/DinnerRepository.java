@@ -26,7 +26,7 @@ public class DinnerRepository {
      * @param context Context of the application
      */
     public DinnerRepository(Context context) {
-        dbHelper = new DatabaseHelper(context);
+        dbHelper = DatabaseHelper.getInstance(context);
         dinnerList = new ArrayList<>();
         updateDinnerList();
     }
@@ -57,11 +57,15 @@ public class DinnerRepository {
         return true;
     }
 
-
-    public void deleteDinner(int dinnerID) {
-        dbHelper.getWritableDatabase().delete(Dinner.TABLE_NAME, Dinner.KEY_ID + " = ?",
-                new String[]{Integer.toString(dinnerID)});
+    public boolean deleteDinner(int dinnerID) {
+        if (dbHelper.getWritableDatabase().delete(Dinner.TABLE_NAME, Dinner.KEY_ID + " = ?",
+                new String[]{Integer.toString(dinnerID)}) >= 1) {
+            dbHelper.close();
+            return true;
+        }
         dbHelper.close();
+        return false;
+
     }
 
     public Dinner getDinner(int dinnerID) {
@@ -77,9 +81,9 @@ public class DinnerRepository {
                 d.setCuisine(results.getString(results.getColumnIndex(Dinner.KEY_CUISINE)));
                 d.setRating(results.getInt(results.getColumnIndex(Dinner.KEY_RATING)));
                 String[] raw = results.getString(results.getColumnIndex(Dinner.KEY_INGREDIENTS_ID)).replaceAll("[^1-9,]", "").split(",");
-                for(int i = 0; i < raw.length; i++) { //TODO: Replace with foreach
+                for (String s : raw) {
                     try {
-                        d.addIngredients(Integer.parseInt(raw[i]));
+                        d.addIngredients(Integer.parseInt(s));
                     } catch (NumberFormatException e) {
                         Log.e("Error", "Couldn't parseIn at Dinner.getDinner " + e.getMessage());
                     }
@@ -132,7 +136,7 @@ public class DinnerRepository {
                 d.setName(results.getString(results.getColumnIndex(Dinner.KEY_NAME)));
                 d.setDescription(results.getString(results.getColumnIndex(Dinner.KEY_DESCRIPTION)));
                 d.setCuisine(results.getString(results.getColumnIndex(Dinner.KEY_CUISINE)));
-
+                d.setRating(results.getInt(results.getColumnIndex(Dinner.KEY_RATING)));
                 try {
                     d.setDate(new SimpleDateFormat("dd-MM-yyyy", new Locale("da", "DK"))
                             .parse(results.getString(results.getColumnIndex(Dinner.KEY_DATE))));
@@ -142,9 +146,9 @@ public class DinnerRepository {
                 }
 
                 String[] raw = results.getString(results.getColumnIndex(Dinner.KEY_INGREDIENTS_ID)).replaceAll("[^1-9,]", "").split(",");
-                for (int i = 0; i < raw.length; i++) { //TODO: Replace with foreach loop
+                for (String s : raw) {
                     try {
-                        d.addIngredients(Integer.parseInt(raw[i]));
+                        d.addIngredients(Integer.parseInt(s));
                     } catch(NumberFormatException e) {
                         Log.e("DinnerRepository", "Couldn't parseInt at Dinner.getDinnerList " + e.toString());
                     }

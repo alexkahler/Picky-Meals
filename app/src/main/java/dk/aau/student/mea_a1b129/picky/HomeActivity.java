@@ -1,19 +1,20 @@
 package dk.aau.student.mea_a1b129.picky;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.RatingBar;
@@ -30,11 +31,18 @@ import java.util.Random;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    private static final String TAG = HomeActivity.class.getSimpleName();
+    private static Context context;
+
+    public static Context getContext() {
+        return context;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drawer_home_activity);
+        context = getApplicationContext();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -90,17 +98,19 @@ public class HomeActivity extends AppCompatActivity
         }
         else {
             int currentlySuggestedDinnerID = allDinners.get(new Random().nextInt(allDinners.size())).getDinnerID();
-            Log.d("HomeActivity", "DinnerID suggested: " + currentlySuggestedDinnerID);
+            Log.i(TAG, "DinnerID suggested: " + currentlySuggestedDinnerID);
             d = dr.getDinner(currentlySuggestedDinnerID);
         }
+
+        //Set the Dinner context to views.
         dinnerTitle.setText(d.getName());
         dinnerDescription.setText(d.getDescription());
         dinnerRating.setRating(d.getRating());
         dinnerCategory.setText(d.getCuisine());
 
+        //Find the ingredients by ingredientsID. TODO: This should probably be handled by IngredientRepository or the DinnerRepository.
         List<Integer> ingredientIDList = d.getIngredientID();
         List<Ingredient> ingredientList = new ArrayList<>();
-        //Find the ingredients by ingredientsID. TODO: This should probably be handled by IngredientRepository or the DinnerRepository.
         for(int i : ingredientIDList) {
             ingredientList.add(ir.getIngredient(i));
         }
@@ -126,21 +136,22 @@ public class HomeActivity extends AppCompatActivity
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+    /*
+        @Override
+        public boolean onOptionsItemSelected(MenuItem item) {
+            // Handle action bar item clicks here. The action bar will
+            // automatically handle clicks on the Home/Up button, so long
+            // as you specify a parent activity in AndroidManifest.xml.
+            int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+            //noinspection SimplifiableIfStatement
+            if (id == R.id.action_settings) {
+                return true;
+            }
+
+            return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
-    }
-
+     */
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     //TODO move onNavigationItemSelected into own super class (or interface?) and implement all activities from super class menu.
@@ -183,7 +194,7 @@ public class HomeActivity extends AppCompatActivity
     }
 
     private void populateDB() {
-        DatabaseHelper dbHelper = new DatabaseHelper(this.getApplicationContext());
+        DatabaseHelper dbHelper = DatabaseHelper.getInstance(context);
         ContentValues cv = new ContentValues();
 
         Calendar cal = Calendar.getInstance();
@@ -193,7 +204,7 @@ public class HomeActivity extends AppCompatActivity
         cv.put(Dinner.KEY_DESCRIPTION, "Make me a sandwich" );
         cv.put(Dinner.KEY_INGREDIENTS_ID, "1, 2, 3" );
         cv.put(Dinner.KEY_RATING, 2);
-        cv.put(Dinner.KEY_CUISINE, "Waifu food" );
+        cv.put(Dinner.KEY_CUISINE, "Waifu food");
         cv.put(Dinner.KEY_DATE, new SimpleDateFormat("dd-MM-yyyy", new Locale("da", "DK")).format(cal.getTime()));
         dbHelper.getWritableDatabase().insert(Dinner.TABLE_NAME, null, cv);
 
@@ -204,13 +215,13 @@ public class HomeActivity extends AppCompatActivity
         cv.put(Dinner.KEY_DESCRIPTION, "I can haz cheez?" );
         cv.put(Dinner.KEY_INGREDIENTS_ID, "2, 3, 1" );
         cv.put(Dinner.KEY_RATING, 3);
-        cv.put(Dinner.KEY_CUISINE, "Cat food" );
+        cv.put(Dinner.KEY_CUISINE, "Cat food");
         cv.put(Dinner.KEY_DATE, new SimpleDateFormat("dd-MM-yyyy", new Locale("da", "DK")).format(cal.getTime()));
         dbHelper.getWritableDatabase().insert(Dinner.TABLE_NAME, null, cv);
 
         cv.clear();
         cal.clear();
-        cv.put(Dinner.KEY_NAME, "Steak" );
+        cv.put(Dinner.KEY_NAME, "Steak");
         cv.put(Dinner.KEY_DESCRIPTION, "Man food");
         cv.put(Dinner.KEY_INGREDIENTS_ID, "1");
         cv.put(Dinner.KEY_RATING, 5);
@@ -221,23 +232,23 @@ public class HomeActivity extends AppCompatActivity
         cv.clear();
         cv.put(Ingredient.KEY_NAME, "Chili");
         cv.put(Ingredient.KEY_DESCRIPTION, "Hot as my waifu");
-        cv.put(Ingredient.KEY_CATEGORY, "Spice");
+        cv.put(Ingredient.KEY_CATEGORY, Ingredient.Category.Spice.name());
         dbHelper.getWritableDatabase().insert(Ingredient.TABLE_NAME, null, cv);
 
 
         cv.clear();
         cv.put(Ingredient.KEY_NAME, "Onion");
         cv.put(Ingredient.KEY_DESCRIPTION, "Makes you sad :(");
-        cv.put(Ingredient.KEY_CATEGORY, "Vegetable");
+        cv.put(Ingredient.KEY_CATEGORY, Ingredient.Category.Vegetable.name());
         dbHelper.getWritableDatabase().insert(Ingredient.TABLE_NAME, null, cv);
 
         cv.clear();
         cv.put(Ingredient.KEY_NAME, "Potato");
         cv.put(Ingredient.KEY_DESCRIPTION, "Stuff the Irish likes");
-        cv.put(Ingredient.KEY_CATEGORY, "Vegetable");
+        cv.put(Ingredient.KEY_CATEGORY, Ingredient.Category.Vegetable.name());
         dbHelper.getWritableDatabase().insert(Ingredient.TABLE_NAME, null, cv);
 
         cv.clear();
-        System.out.println("Database populated");
+        Log.v(TAG, "Database populated");
     }
 }
