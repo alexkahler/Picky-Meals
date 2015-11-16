@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * A fragment representing a list of Items.
  */
-public class ChooseIngredientFragment extends DialogFragment {
+public class IngredientChooseFragment extends DialogFragment {
     private static final String TAG = "ChooseIngredientFrag";
 
     private ArrayList<Ingredient> chosenIngredients = new ArrayList<>();
@@ -33,7 +33,7 @@ public class ChooseIngredientFragment extends DialogFragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public ChooseIngredientFragment() {
+    public IngredientChooseFragment() {
     }
 
     @Override
@@ -80,7 +80,7 @@ public class ChooseIngredientFragment extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dialog_ingredient_fragment, container);
+        View view = inflater.inflate(R.layout.fragment_dialog_choose_ingredient, container);
         Dialog dialog = getDialog();
         dialog.setTitle(getResources().getString(R.string.dialog_title));
 

@@ -42,6 +42,7 @@ public class DinnerHistory extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dinner_history);
+
         //Find the toolbar and set back button.
         Toolbar toolbar = (Toolbar) findViewById(R.id.dinner_history_toolbar);
         setSupportActionBar(toolbar);
@@ -105,9 +106,7 @@ public class DinnerHistory extends AppCompatActivity {
                 toDate = Calendar.getInstance();
                 toDate.set(year, monthOfYear, dayOfMonth);
                 if(fromDate != null) {
-                    Log.d("DinnerHistory", "In if-statement onDateSet: fromDate != null");
                     if (toDate.before(fromDate)) {
-                        Log.d("DinnerHistory", "In if-statement onDateSet: Making toDate toast");
                         Toast.makeText(getApplicationContext(), getResources().getText(R.string.error_filterTo_before_filterFrom), Toast.LENGTH_SHORT).show();
                         return;
                     }
@@ -184,6 +183,14 @@ public class DinnerHistory extends AppCompatActivity {
                 return true;
             }
         });
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent i = new Intent(getApplicationContext(), AddDinnerActivity.class);
+                i.putExtra("dinnerID", ((Dinner) adapter.getItem(position)).getDinnerID());
+                startActivity(i);
+            }
+        });
     }
 
     private List<Dinner> updateDinnerList() {
@@ -196,7 +203,6 @@ public class DinnerHistory extends AppCompatActivity {
             Log.e("DinnerHistory", "No date in Dinner object to compare to" + e.getMessage());
             e.printStackTrace();
         }
-        Log.d(TAG, "I got a list with dinners! Rating of last meal in list: " + list.get(list.size() - 1).getRating());
 
         //Only show Dinner between to and from dates chosen
         for(Dinner d : list) {

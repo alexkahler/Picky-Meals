@@ -24,18 +24,21 @@ import java.util.Locale;
 
 /**
  * @author Aleksander Kähler, Group B129, Aalborg University
+ * TODO: Implement remove ingredient when tapping ingredients in ingredient grid.
  */
-public class AddDinnerActivity extends AppCompatActivity implements ChooseIngredientFragment.DialogDoneListener {
+public class AddDinnerActivity extends AppCompatActivity implements IngredientChooseFragment.DialogDoneListener {
     private static final String TAG = "AddDinnerActivity";
     private EditText dinnerName, dinnerCategory, dinnerDescription;
     private Calendar dinnerDate;
     private TextView dateText;
     private RatingBar dinnerRating;
     private Button chooseDate, saveButton, cancelButton, chooseIngredientsButton;
+    private GridView gridView;
     private DatePickerDialog datePickerDialog;
     private ArrayList<Ingredient> ingredientList = new ArrayList<>();
     private IngredientGridAdapter iga;
     private HashMap<Ingredient.Category, ArrayList<Boolean>> checkedState;
+    private int dinnerID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +53,21 @@ public class AddDinnerActivity extends AppCompatActivity implements ChooseIngred
         findViewsByID();
         assignListeners();
         updateAdapter();
+        if (getIntent().hasExtra("dinnerID")) {
+            DinnerRepository dr = new DinnerRepository(getApplicationContext());
+            dinnerID = getIntent().getIntExtra("dinnerID", -1);
+            dinnerName.setText(dr.getDinner(dinnerID).getName());
+            dinnerCategory.setText(dr.getDinner(dinnerID).getCuisine());
+            dinnerDescription.setText(dr.getDinner(dinnerID).getDescription());
+            dinnerRating.setRating(dr.getDinner(dinnerID).getRating());
+            dateText.setText(new SimpleDateFormat("dd-MM-yyyy", new Locale("da", "DK")).format(Calendar.getInstance().getTime()));
+            IngredientRepository ir = new IngredientRepository(getApplicationContext());
+            for (int i : dr.getDinner(dinnerID).getIngredientID()) {
+                ingredientList.add(ir.getIngredient(i));
+            }
+            iga.notifyDataSetChanged();
+        }
+
     }
 
     private void findViewsByID() {
@@ -65,6 +83,7 @@ public class AddDinnerActivity extends AppCompatActivity implements ChooseIngred
         saveButton = (Button) findViewById(R.id.add_dinner_save_button);
         cancelButton = (Button) findViewById(R.id.add_dinner_cancel_button);
         chooseIngredientsButton = (Button) findViewById(R.id.add_dinner_choose_ingredients);
+        gridView = (GridView) findViewById(R.id.add_dinner_ingredient_gridview);
 
 
 
@@ -82,14 +101,30 @@ public class AddDinnerActivity extends AppCompatActivity implements ChooseIngred
                     for (Ingredient i : ingredientList) {
                         ingredientIDList.add(i.getIngredientsID());
                     }
-                    dr.insertDinner(
-                            dinnerName.getText().toString(),
-                            dinnerDescription.getText().toString(),
-                            dinnerCategory.getText().toString(),
-                            ingredientIDList,
-                            Math.round(dinnerRating.getRating()),
-                            dinnerDate.getTime()
-                    );
+                    //If we're updating a dinner
+                    if (dinnerID > 0) {
+                        Log.d(TAG, "Updating dinner with id: " + dinnerID);
+                        dr.updateDinner(
+                                dinnerID,
+                                dinnerName.getText().toString(),
+                                dinnerDescription.getText().toString(),
+                                dinnerCategory.getText().toString(),
+                                ingredientIDList,
+                                Math.round(dinnerRating.getRating()),
+                                dinnerDate.getTime());
+                    }
+                    //else make a new dinner
+                    else {
+                        Log.d(TAG, "Inserting dinner");
+                        dr.insertDinner(
+                                dinnerName.getText().toString(),
+                                dinnerDescription.getText().toString(),
+                                dinnerCategory.getText().toString(),
+                                ingredientIDList,
+                                Math.round(dinnerRating.getRating()),
+                                dinnerDate.getTime());
+
+                    }
                     Toast.makeText(getApplicationContext(), "Dinner saved!", Toast.LENGTH_SHORT).show();
                     finish();
                 }
@@ -106,7 +141,7 @@ public class AddDinnerActivity extends AppCompatActivity implements ChooseIngred
         chooseIngredientsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ChooseIngredientFragment cif = new ChooseIngredientFragment();
+                IngredientChooseFragment icf = new IngredientChooseFragment();
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.addToBackStack(null);
                 Log.d(TAG, "In onClick method assigning ingredients to Bundle. ingredientsList: " + ingredientList + " checkedState: " + checkedState);
@@ -116,9 +151,9 @@ public class AddDinnerActivity extends AppCompatActivity implements ChooseIngred
                     b.clear();
                     b.putSerializable("ingredientsID", ingredientList);
                     b.putSerializable("checkedState", checkedState);
-                    cif.setArguments(b);
+                    icf.setArguments(b);
                 }
-                cif.show(ft, "choose_ingredient_fragment");
+                icf.show(ft, "choose_ingredient_fragment");
             }
         });
 
@@ -143,7 +178,6 @@ public class AddDinnerActivity extends AppCompatActivity implements ChooseIngred
 
     public void updateAdapter() {
         iga = new IngredientGridAdapter(getApplicationContext(), ingredientList);
-        GridView gridView = (GridView) findViewById(R.id.add_dinner_ingredient_gridview);
         gridView.setAdapter(iga);
         iga.notifyDataSetChanged();
     }

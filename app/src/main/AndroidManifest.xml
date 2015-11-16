@@ -57,6 +57,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="dk.aau.student.mea_a1b129.picky.HomeActivity" />
         </activity>
+        <activity
+            android:name=".IngredientEditActivity"
+            android:label="@string/title_activity_edit_ingredients"
+            android:parentActivityName=".PreferencesActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="dk.aau.student.mea_a1b129.picky.PreferencesActivity" />
+        </activity>
     </application>
 
 </manifest>

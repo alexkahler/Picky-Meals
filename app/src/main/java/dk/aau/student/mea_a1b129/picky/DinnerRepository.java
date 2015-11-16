@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.text.ParseException;
@@ -13,13 +15,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-/*
-Dinner repository to lookup dinners.
+/**
+ * @author Aleksander Kähler, Group B129, Aalborg University
+ * Dinner repository to lookup dinners.
  */
 public class DinnerRepository {
 
     private DatabaseHelper dbHelper;
     private List<Dinner> dinnerList;
+    private Context context;
 
     /**
      * Constructor for DinnerRepository. When initialized the class updates the latest list of dinners from the database.
@@ -28,6 +32,7 @@ public class DinnerRepository {
     public DinnerRepository(Context context) {
         dbHelper = DatabaseHelper.getInstance(context);
         dinnerList = new ArrayList<>();
+        this.context = context;
         updateDinnerList();
     }
 
@@ -57,6 +62,52 @@ public class DinnerRepository {
         return true;
     }
 
+    /**
+     * Update a Dinner entry in the database with the given Dinner ID.
+     *
+     * @param id           the Dinner ID of the entry you want to update. ID must be greater than or equal to 0.
+     * @param name         the new name, which you want to give the Dinner entry
+     * @param description  the new description of the Dinner
+     * @param category     the new category of the Dinner
+     * @param ingredientID the new ingredients which the Dinner should have
+     * @param rating       the rating of the of Dinner. If nothing is passed here - the rating will be 0. You should pass the old rating if you wish to keep the rating.
+     * @param date         the new date of the Dinner.
+     * @return returns true if the dinner was succesfully updated.
+     * @see Dinner
+     */
+    public boolean updateDinner(@NonNull int id, @Nullable String name, @Nullable String description, @Nullable String category, @Nullable List<Integer> ingredientID, int rating, @Nullable Date date) {
+        ContentValues cv = new ContentValues();
+        if (id >= -1) {
+            if (name != null) {
+                cv.put(Dinner.KEY_NAME, name);
+            }
+            if (description != null) {
+                cv.put(Dinner.KEY_DESCRIPTION, description);
+            }
+            if (category != null) {
+                cv.put(Dinner.KEY_CUISINE, category);
+            }
+            if (ingredientID != null) {
+                cv.put(Dinner.KEY_INGREDIENTS_ID, ingredientID.toString());
+            }
+            if (date != null) {
+                cv.put(Dinner.KEY_DATE, new SimpleDateFormat("dd-MM-yyyy", new Locale("da", "DK")).format(date));
+            }
+            cv.put(Dinner.KEY_RATING, rating);
+            if (dbHelper.getWritableDatabase().update(Dinner.TABLE_NAME, cv, Dinner.KEY_ID + " = ?", new String[]{id + ""}) >= 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Delete a Dinner from the Database with the given ID.
+     *
+     * @param dinnerID the ID of the dinner to be deleted from the database.
+     * @return returns true if dinner was successfully deleted, otherwise false.
+     * @see Dinner
+     */
     public boolean deleteDinner(int dinnerID) {
         if (dbHelper.getWritableDatabase().delete(Dinner.TABLE_NAME, Dinner.KEY_ID + " = ?",
                 new String[]{Integer.toString(dinnerID)}) >= 1) {
@@ -110,10 +161,7 @@ public class DinnerRepository {
      * @see Dinner
      */
     public List<Dinner> getDinnerList() {
-        if(!dinnerList.isEmpty())   {
-            return dinnerList;
-        }
-        return null;
+        return dinnerList;
     }
 
     /**

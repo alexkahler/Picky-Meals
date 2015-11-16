@@ -29,6 +29,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
+                android:paddingLeft="5dp"
                 android:text="@string/add_dinner_name"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -59,6 +60,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/add_dinner_edit_category"
                 android:layout_marginTop="5dp"
+                android:paddingLeft="5dp"
                 android:text="@string/add_dinner_description"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -77,6 +79,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/add_dinner_edit_dinner_name"
                 android:layout_marginTop="5dp"
+                android:paddingLeft="5dp"
                 android:text="@string/add_dinner_category"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -95,6 +98,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/add_dinner_edit_dinner_description"
                 android:layout_marginTop="5dp"
+                android:paddingLeft="5dp"
                 android:text="@string/add_dinner_rating"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -114,7 +118,7 @@
                 style="@style/Base.Widget.AppCompat.Button.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignEnd="@+id/textView3"
+                android:layout_alignEnd="@+id/add_dinner_choose_ingredients"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/add_dinner_edit_rating"
                 android:layout_marginTop="5dp"
@@ -134,6 +138,7 @@
                 style="@style/Base.Widget.AppCompat.Button.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/textView3"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/add_dinner_choose_date_button"
                 android:text="@string/add_dinner_choose_ingredients" />

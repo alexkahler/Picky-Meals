@@ -28,7 +28,8 @@
         style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/history_filter_to_button"
+        android:layout_alignParentEnd="true"
+        android:layout_alignStart="@+id/history_filter_to_button"
         android:layout_below="@+id/history_filter_to_button"
         android:layout_gravity="right"
         android:text="@string/dinner_history_clear_filter_button" />
@@ -63,18 +64,17 @@
         android:gravity="center_vertical"
         android:text="@string/dinner_history_choose_date" />
 
-    <LinearLayout
+    <View
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
+        android:layout_height="1dp"
+        android:layout_alignParentEnd="true"
         android:layout_below="@+id/history_clear_button"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:background="@android:color/darker_gray" />
 
-        <ListView
-            android:id="@+id/history_list_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+    <ListView
+        android:id="@+id/history_list_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/history_clear_button" />
 
 </RelativeLayout>

@@ -3,7 +3,9 @@ package dk.aau.student.mea_a1b129.picky;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -32,7 +34,11 @@ import java.util.Random;
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private static final String TAG = HomeActivity.class.getSimpleName();
+    private static String USERNAME = null;
+
     private static Context context;
+    private int currentlySuggestedDinnerID;
+
 
     public static Context getContext() {
         return context;
@@ -43,6 +49,7 @@ public class HomeActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drawer_home_activity);
         context = getApplicationContext();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -57,11 +64,14 @@ public class HomeActivity extends AppCompatActivity
 
         //Floating action button.
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() { //TODO: Add dinner to log when FAB is clicked.
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(getApplicationContext(), AddDinnerActivity.class);
-                startActivity(i);
+                if (currentlySuggestedDinnerID > 0) { //check if there's a dinner suggested.
+                    Intent i = new Intent(getApplicationContext(), AddDinnerActivity.class);
+                    i.putExtra("dinnerID", currentlySuggestedDinnerID);
+                    startActivity(i);
+                }
             }
         });
 
@@ -73,6 +83,16 @@ public class HomeActivity extends AppCompatActivity
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        View headerLayout = navigationView.inflateHeaderView(R.layout.nav_header_home_activity);
+        TextView userLevel = (TextView) headerLayout.findViewById(R.id.nav_header_level_text);
+        TextView username = (TextView) headerLayout.findViewById(R.id.nav_header_name_title);
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        USERNAME = preferences.getString("username", "Anonymous");
+        userLevel.setText("Level 1");
+        username.setText(USERNAME);
+
 
         //populateDB();
         getNewDinnerSuggestion();
@@ -91,32 +111,29 @@ public class HomeActivity extends AppCompatActivity
 
         //Get a random suggestion TODO: Make Algorithm class for Dinner suggestions.
         List<Dinner> allDinners = dr.getDinnerList();
-        Dinner d;
-        if(allDinners == null) {
-            d = new Dinner();
-            d.setName("No dinners in your log :(");
+        if (allDinners == null || allDinners.isEmpty()) {
+            dinnerTitle.setText(getResources().getText(R.string.home_dinner_no_dinner_found));
         }
         else {
-            int currentlySuggestedDinnerID = allDinners.get(new Random().nextInt(allDinners.size())).getDinnerID();
+            currentlySuggestedDinnerID = allDinners.get(new Random().nextInt(allDinners.size())).getDinnerID();
             Log.i(TAG, "DinnerID suggested: " + currentlySuggestedDinnerID);
-            d = dr.getDinner(currentlySuggestedDinnerID);
-        }
+            Dinner d = dr.getDinner(currentlySuggestedDinnerID);
+            //Set the Dinner context to views.
+            dinnerTitle.setText(d.getName());
+            dinnerDescription.setText(d.getDescription());
+            dinnerRating.setRating(d.getRating());
+            dinnerCategory.setText(d.getCuisine());
 
-        //Set the Dinner context to views.
-        dinnerTitle.setText(d.getName());
-        dinnerDescription.setText(d.getDescription());
-        dinnerRating.setRating(d.getRating());
-        dinnerCategory.setText(d.getCuisine());
-
-        //Find the ingredients by ingredientsID. TODO: This should probably be handled by IngredientRepository or the DinnerRepository.
-        List<Integer> ingredientIDList = d.getIngredientID();
-        List<Ingredient> ingredientList = new ArrayList<>();
-        for(int i : ingredientIDList) {
-            ingredientList.add(ir.getIngredient(i));
+            //Find the ingredients by ingredientsID. TODO: This should probably be handled by IngredientRepository or the DinnerRepository.
+            List<Integer> ingredientIDList = d.getIngredientID();
+            List<Ingredient> ingredientList = new ArrayList<>();
+            for (int i : ingredientIDList) {
+                ingredientList.add(ir.getIngredient(i));
+            }
+            IngredientGridAdapter iga = new IngredientGridAdapter(this, ingredientList);
+            GridView gridView = (GridView) findViewById(R.id.home_dinner_gridview);
+            gridView.setAdapter(iga);
         }
-        IngredientGridAdapter iga = new IngredientGridAdapter(this, ingredientList);
-        GridView gridView = (GridView) findViewById(R.id.home_dinner_gridview);
-        gridView.setAdapter(iga);
     }
 
     @Override
@@ -136,6 +153,7 @@ public class HomeActivity extends AppCompatActivity
         return true;
     }
 
+    //Unused options menu
     /*
         @Override
         public boolean onOptionsItemSelected(MenuItem item) {

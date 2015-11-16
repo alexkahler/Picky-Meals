@@ -11,6 +11,7 @@ import java.util.List;
 /**
  * @author Aleksander Kähler, Group B129, Aalborg University
  * IngredientRepository to store all of the ingredients used in recipes.
+ * TODO: Delete ingredient description - useless
  */
 public class IngredientRepository {
     private static final String TAG = "IngredientRepository";
@@ -34,7 +35,7 @@ public class IngredientRepository {
     public boolean insertIngredient(String name, Ingredient.Category category, String description) {
         ContentValues cv = new ContentValues();
         cv.put(Ingredient.KEY_NAME, name);
-        cv.put(Ingredient.KEY_CATEGORY, category.toString());
+        cv.put(Ingredient.KEY_CATEGORY, category.name());
         cv.put(Ingredient.KEY_DESCRIPTION, description);
         Log.i("SQL", "IngredientRepository: insertIngredient() Accessing database");
         dbHelper.getWritableDatabase().insert(Ingredient.TABLE_NAME, null, cv);
@@ -47,10 +48,10 @@ public class IngredientRepository {
      * @param category the category of the ingredients, e.g. meat, vegetable, fruit.
      * @see Ingredient
      */
-    public boolean updateIngredientsTag(int id, String name, Ingredient.Category category, String description) {
+    public boolean updateIngredient(int id, String name, Ingredient.Category category, String description) {
         ContentValues cv = new ContentValues();
         cv.put(Ingredient.KEY_NAME, name);
-        cv.put(Ingredient.KEY_CATEGORY, category.toString());
+        cv.put(Ingredient.KEY_CATEGORY, category.name());
         cv.put(Ingredient.KEY_DESCRIPTION, description);
         try {
             Log.i(TAG, "SQL: UpdateIngredientsTag() Accessing database");
@@ -85,7 +86,8 @@ public class IngredientRepository {
             i.setIngredientsID(id);
             return i;
         } else {
-            i.setName("Couldn't find ingredient");
+            i.setName("Unknown ingredient");
+            i.setCategory(Ingredient.Category.Other.name());
             return i;
         }
     }
@@ -120,7 +122,8 @@ public class IngredientRepository {
         }
         else {
             results.close();
-            return null;
+            ingredientList.add(new Ingredient("No ingredients available :(", "", Ingredient.Category.Other));
+            return ingredientList;
         }
     }
 

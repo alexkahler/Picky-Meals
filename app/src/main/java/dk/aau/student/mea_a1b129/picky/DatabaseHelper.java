@@ -8,7 +8,8 @@ import android.util.Log;
 /**
  * Database helper to create and initiate connections to app database.
  */
-public class DatabaseHelper extends SQLiteOpenHelper { // TODO: Make singleton to escape memory leak.
+public class DatabaseHelper extends SQLiteOpenHelper {
+
     public static final String DATABASE_NAME = "Dishit.db";
     private static final String TAG = DatabaseHelper.class.getSimpleName();
     private static int DATABASE_VERSION = 1;

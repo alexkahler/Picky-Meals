@@ -25,9 +25,13 @@ public class IngredientListAdapter extends BaseExpandableListAdapter {
     private List<Ingredient.Category> ingredientCategories;
     private ArrayList<Ingredient> chosenIngredients;
     private HashMap<Ingredient.Category, ArrayList<Boolean>> checkedState = new HashMap<>();
+    private boolean inEditMode = false;
 
-    public IngredientListAdapter() {
-
+    IngredientListAdapter(Context context, List<Ingredient.Category> ingredientCategories, HashMap<Ingredient.Category, List<Ingredient>> ingredients, boolean inEditMode) {
+        this.context = context;
+        this.ingredientCategories = ingredientCategories;
+        this.ingredientItems = ingredients;
+        this.inEditMode = inEditMode;
     }
 
     public IngredientListAdapter(Context context,
@@ -75,44 +79,56 @@ public class IngredientListAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         final Ingredient ingredient = (Ingredient) getChild(groupPosition, childPosition);
-        if (convertView == null) {
-            LayoutInflater inflater = (LayoutInflater) context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.ingredient_list_item, null);
-        }
 
-        final CheckBox ingredientItem = (CheckBox) convertView
-                .findViewById(R.id.ingredient_list_item_checkbox);
-
-        if (checkedState.get(ingredient.getCategory()).get(childPosition)) {
-            Log.d(TAG, "Trying to set setChecked on " + ingredient.getName());
-            ingredientItem.setChecked(true);
-        } else {
-            ingredientItem.setChecked(false);
-        }
-
-        ingredientItem.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean checked) {
-                if (checked) {
-                    checkedState.get(ingredient.getCategory()).set(childPosition, true);
-                    chosenIngredients.add(ingredient);
-                } else {
-                    checkedState.get(ingredient.getCategory()).set(childPosition, false);
-                    Log.d(TAG, "Removing ingredient " + ingredient.getName() + " Size before: " + chosenIngredients.size());
-                    for (int i = 0; i < chosenIngredients.size(); i++) {
-                        if (ingredient.getIngredientsID() == chosenIngredients.get(i).getIngredientsID()) {
-                            chosenIngredients.remove(i);
-                        }
-                    }
-                    Log.d(TAG, "Size aftter: " + chosenIngredients.size());
-                }
-                //buttonView.setChecked(checked);
+        if (inEditMode) {
+            if (convertView == null) {
+                LayoutInflater inflater = (LayoutInflater) context
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                convertView = inflater.inflate(R.layout.ingredient_list_text_item, null);
             }
-        });
-        ingredientItem.setText(ingredient.getName());
 
+            TextView ingredientItem = (TextView) convertView.findViewById(R.id.ingredient_list_text_item);
+            ingredientItem.setText(ingredient.getName());
+        } else {
+            if (convertView == null) {
+                LayoutInflater inflater = (LayoutInflater) context
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                convertView = inflater.inflate(R.layout.ingredient_list_checkbox_item, null);
+            }
+
+            final CheckBox ingredientItem = (CheckBox) convertView
+                    .findViewById(R.id.ingredient_list_item_checkbox);
+
+            if (checkedState.get(ingredient.getCategory()).get(childPosition)) {
+                Log.d(TAG, "Trying to set setChecked on " + ingredient.getName());
+                ingredientItem.setChecked(true);
+            } else {
+                ingredientItem.setChecked(false);
+            }
+
+            ingredientItem.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean checked) {
+                    if (checked) {
+                        checkedState.get(ingredient.getCategory()).set(childPosition, true);
+                        chosenIngredients.add(ingredient);
+                    } else {
+                        checkedState.get(ingredient.getCategory()).set(childPosition, false);
+                        Log.d(TAG, "Removing ingredient " + ingredient.getName() + " Size before: " + chosenIngredients.size());
+                        for (int i = 0; i < chosenIngredients.size(); i++) {
+                            if (ingredient.getIngredientsID() == chosenIngredients.get(i).getIngredientsID()) {
+                                chosenIngredients.remove(i);
+                            }
+                        }
+                        Log.d(TAG, "Size aftter: " + chosenIngredients.size());
+                    }
+                    //buttonView.setChecked(checked);
+                }
+            });
+            ingredientItem.setText(ingredient.getName());
+        }
         return convertView;
+
     }
 
     @Override

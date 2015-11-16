@@ -34,7 +34,10 @@ public class Dinner implements Comparable {
     private Date date;
 
     public Dinner() {
+    }
 
+    public Dinner(String name) {
+        this.name = name;
     }
 
     public int getDinnerID() {

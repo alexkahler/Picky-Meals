@@ -1,6 +1,7 @@
 package dk.aau.student.mea_a1b129.picky;
 
 import android.os.Bundle;
+import android.preference.PreferenceFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -15,5 +16,24 @@ public class PreferencesActivity extends AppCompatActivity {
         if(getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
+        getFragmentManager().beginTransaction()
+                .replace(R.id.preferences_fragment_container, new PreferencesFrag())
+                .commit();
+    }
+
+    public static class PreferencesFrag extends PreferenceFragment {
+
+        public PreferencesFrag() {
+            super();
+        }
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.preferences_main);
+        }
+
+
     }
 }
