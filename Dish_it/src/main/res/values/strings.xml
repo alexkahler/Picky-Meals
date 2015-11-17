@@ -1,0 +1,104 @@
+<resources>
+    <string name="app_name">Dish\'it</string>
+
+
+
+    <string name="action_settings">Settings</string>
+
+    <!-- App drawer menu strings -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_profile_pic">Profile picture</string>
+    <string name="nav_title_tools">Tools</string>
+    <string name="nav_home">Get a suggestion</string>
+    <string name="nav_dinner_history">Dinner History</string>
+    <string name="nav_dinner_plan">Dinner plan</string>
+    <string name="nav_statistics">Your statistics</string>
+    <string name="nav_feedback">Feedback</string>
+    <string name="nav_preferences">Preferences</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Content Home strings -->
+    <string name="home_dinner_new_suggestion_button">New Suggestion</string>
+    <string name="home_dinner_no_dinner_found">No dinner found :(</string>
+
+    <!-- Content Dinner History strings -->
+    <string name="dinner_history_clear_filter_button">Clear Filter</string>
+    <string name="dinner_history_filter_from">Filter From:</string>
+    <string name="dinner_history_filter_to">Filter To:</string>
+    <string name="dinner_history_choose_date">Choose date</string>
+    <string name="error_filterFrom_after_filterTo">Error: "Filter From" can\'t be after "Filter To"</string>
+    <string name="error_filterTo_before_filterFrom">Error: "Filter To" can\'t be before "Filter From"</string>
+    <string name="dinner_list_item_date_pretext">""</string>
+    <string name="dinner_history_delete_dinner_title">Delete Dinner?</string>
+    <string name="dinner_history_delete_dinner_message_pt1">Do you wish to delete</string>
+    <!-- Dinner name goes between pt1 and pt2 -->
+    <string name="dinner_history_delete_dinner_message_pt2">from your log?</string>
+    <string name="dinner_history_delete_dinner_OK">Yes</string>
+    <string name="dinner_history_delete_dinner_cancel">No</string>
+
+    <!-- Activity Add Dinner strings -->
+    <string name="add_dinner_name">Dinner Name:\*</string>
+    <string name="add_dinner_obligatory">\*obligatory</string>
+    <string name="add_dinner_edit_dinner_name">Enter the name of the dinner&#8230;</string>
+    <string name="add_dinner_description">Dinner Description:</string>
+    <string name="add_dinner_edit_dinner_description">Enter a description of the dinner&#8230;</string>
+    <string name="add_dinner_category">Dinner Category:</string>
+    <string name="add_dinner_edit_category">Enter a category&#8230;</string>
+    <string name="add_dinner_rating">Rate the Dinner:</string>
+    <string name="add_dinner_choose_date_button">Choose a Date:</string>
+    <string name="add_dinner_save_button">Save Dinner</string>
+    <string name="add_dinner_cancel_button">Cancel</string>
+    <string name="add_dinner_choose_ingredients">Choose Ingredients:</string>
+
+    <!-- Statistics Activity strings -->
+    <string name="title_activity_statistics">Statistics</string>
+    <string name="large_text">
+        "Coming Soon!\n"
+    </string>
+
+    <!-- Preferences Activity strings -->
+    <string name="title_activity_preferences">Preferences</string>
+    <string name="preferences_name_category">About You</string>
+    <string name="preferences_your_name_title">Your name:</string>
+    <string name="preferences_your_name_edit">Enter your name&#8230;</string>
+    <string name="preferences_ingredients_category">Ingredients:</string>
+    <string name="preferences_ingredients_title">Edit ingredients</string>
+
+    <!-- Dialog Edit Ingredient Activity Strings -->
+    <string name="title_activity_edit_ingredients">Edit Ingredients</string>
+    <string name="edit_ingredient_add_ingredient">Add new ingredient</string>
+    <string name="edit_ingredient_delete_success">Ingredient successfully deleted!</string>
+
+    <!-- Dialog Choose Ingredient Fragment strings -->
+    <string name="dialog_title">Choose Ingredient</string>
+    <string name="dialog_cancel_button">Cancel</string>
+    <string name="dialog_confirm_button">Confirm</string>
+    <string name="dialog_add_ingredient_button">+Add new ingredient</string>
+
+    <!-- Enum values -->
+    <string name="enum_meat">Meat</string>
+    <string name="enum_poultry">Poultry</string>
+    <string name="enum_seafood">Seafood</string>
+    <string name="enum_vegetable">Vegetables</string>
+    <string name="enum_herb">Herbs</string>
+    <string name="enum_spice">Spices</string>
+    <string name="enum_fruit">Fruits</string>
+    <string name="enum_nuts">Nuts and Seeds</string>
+    <string name="enum_dairy">Dairy</string>
+    <string name="enum_cereal">Cereal</string>
+    <string name="enum_other">Other</string>
+    <string name="enum_oil">Oil</string>
+
+    <!-- Dialog Fragment Edit Ingredient strings  -->
+    <string name="ingredient_dialog_choose_category_text">Choose Category:</string>
+    <string name="ingredient_dialog_name_title">Enter name:</string>
+    <string name="ingredient_dialog_toast_missing_category_error">Please enter a Category for the ingredient</string>
+    <string name="ingredient_dialog_toast_missing_name_error">Please enter a name for the ingredient</string>
+    <string name="ingredient_dialog_toast_success">Ingredient saved!</string>
+    <string name="ingredient_dialog_toast_unknown_error">Error: Couldn\'t save ingredient! Please contact us!</string>
+
+    <!-- Utility strings -->
+    <string name="utility_no_dinner">Couldn\'t find dinner! :(</string>
+    <string name="utility_no_ingredient">Couldn\'t find ingredient! :(</string>
+</resources>
