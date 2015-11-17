@@ -12,8 +12,8 @@
         <PreferenceScreen android:title="@string/preferences_ingredients_title">
 
             <intent
-                android:targetClass="dk.aau.student.mea_a1b129.picky.IngredientEditActivity"
-                android:targetPackage="dk.aau.student.mea_a1b129.picky" />
+                android:targetClass="dk.aau.student.mea_a1b129.dish_it.IngredientEditActivity"
+                android:targetPackage="dk.aau.student.mea_a1b129.dish_it" />
 
         </PreferenceScreen>
     </PreferenceCategory>

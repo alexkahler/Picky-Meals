@@ -23,6 +23,7 @@ class IngredientGridAdapter extends BaseAdapter {
 
     /**
      * Constructor
+     *
      * @param context the context of the app
      * @see Context
      */
@@ -42,8 +43,7 @@ class IngredientGridAdapter extends BaseAdapter {
             textView.setPadding(15, 15, 15, 15);
             textView.setTextSize(18);
             textView.setLayoutParams(new GridView.LayoutParams(GridView.LayoutParams.WRAP_CONTENT, GridView.LayoutParams.WRAP_CONTENT));
-        }
-        else {
+        } else {
             textView = (TextView) convertView;
         }
 

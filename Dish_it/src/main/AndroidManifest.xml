@@ -10,11 +10,11 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
             android:name="dk.aau.student.mea_a1b129.dish_it.HomeActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,7 +25,7 @@
             android:name="dk.aau.student.mea_a1b129.dish_it.StatisticsActivity"
             android:label="@string/title_activity_statistics"
             android:parentActivityName="dk.aau.student.mea_a1b129.dish_it.HomeActivity"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="dk.aau.student.mea_a1b129.dish_it.HomeActivity" />
@@ -34,7 +34,7 @@
             android:name="dk.aau.student.mea_a1b129.dish_it.DinnerHistory"
             android:label="Dinner History"
             android:parentActivityName="dk.aau.student.mea_a1b129.dish_it.HomeActivity"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="dk.aau.student.mea_a1b129.dish_it.HomeActivity" />
@@ -43,7 +43,7 @@
             android:name="dk.aau.student.mea_a1b129.dish_it.AddDinnerActivity"
             android:label="Add a new dinner"
             android:parentActivityName="dk.aau.student.mea_a1b129.dish_it.DinnerHistory"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="dk.aau.student.mea_a1b129.dish_it.AddDinnerActivity" />
@@ -52,7 +52,7 @@
             android:name="dk.aau.student.mea_a1b129.dish_it.PreferencesActivity"
             android:label="@string/title_activity_preferences"
             android:parentActivityName="dk.aau.student.mea_a1b129.dish_it.HomeActivity"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="dk.aau.student.mea_a1b129.dish_it.HomeActivity" />

@@ -80,7 +80,7 @@ public class Dinner implements Comparable {
     }
 
     public boolean removeIngredients(int ingredientsID) {
-        if(ingredientID.contains(ingredientsID)) {
+        if (ingredientID.contains(ingredientsID)) {
             ingredientID.remove(ingredientsID);
             return true;
         } else {
@@ -102,6 +102,7 @@ public class Dinner implements Comparable {
 
     /**
      * Compares one Dinner to another and returns which is newer.
+     *
      * @param another Dinner object.
      * @return an int < 0 if this Date is less than the specified Date, 0 if they are equal, and an int > 0 if this Date is greater
      * @throws ClassCastException

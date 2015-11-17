@@ -117,8 +117,7 @@ public class HomeActivity extends AppCompatActivity
         List<Dinner> allDinners = dr.getDinnerList();
         if (allDinners == null || allDinners.isEmpty()) {
             dinnerTitle.setText(getResources().getText(R.string.home_dinner_no_dinner_found));
-        }
-        else {
+        } else {
             currentlySuggestedDinnerID = allDinners.get(new Random().nextInt(allDinners.size())).getDinnerID();
             Log.i(TAG, "DinnerID suggested: " + currentlySuggestedDinnerID);
             Dinner d = dr.getDinner(currentlySuggestedDinnerID);

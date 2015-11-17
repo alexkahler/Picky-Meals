@@ -25,7 +25,7 @@ import java.util.Locale;
 
 /**
  * @author Aleksander Kähler, Group B129, Aalborg University
- * DinnerHistory activity to show the latest food logs to user.
+ *         DinnerHistory activity to show the latest food logs to user.
  */
 public class DinnerHistory extends AppCompatActivity {
 
@@ -46,7 +46,7 @@ public class DinnerHistory extends AppCompatActivity {
         //Find the toolbar and set back button.
         Toolbar toolbar = (Toolbar) findViewById(R.id.dinner_history_toolbar);
         setSupportActionBar(toolbar);
-        if(getSupportActionBar() != null) {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
@@ -88,8 +88,8 @@ public class DinnerHistory extends AppCompatActivity {
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) { //TODO Optimize DatePickerDialogs - they slow down onCreate() process.
                 fromDate = Calendar.getInstance();
                 fromDate.set(year, monthOfYear, dayOfMonth);
-                if(toDate != null) { //If statement to test if from-filter date is after to-filter date.
-                    if(fromDate.after(toDate)) {
+                if (toDate != null) { //If statement to test if from-filter date is after to-filter date.
+                    if (fromDate.after(toDate)) {
                         Toast.makeText(getApplicationContext(), getResources().getText(R.string.error_filterFrom_after_filterTo), Toast.LENGTH_SHORT).show();
                         return;
                     }
@@ -105,7 +105,7 @@ public class DinnerHistory extends AppCompatActivity {
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 toDate = Calendar.getInstance();
                 toDate.set(year, monthOfYear, dayOfMonth);
-                if(fromDate != null) {
+                if (fromDate != null) {
                     if (toDate.before(fromDate)) {
                         Toast.makeText(getApplicationContext(), getResources().getText(R.string.error_filterTo_before_filterFrom), Toast.LENGTH_SHORT).show();
                         return;
@@ -199,26 +199,23 @@ public class DinnerHistory extends AppCompatActivity {
         List<Dinner> list = dr.getDinnerList();
         try {
             Collections.sort(list);
-        } catch(NullPointerException e) {
+        } catch (NullPointerException e) {
             Log.e("DinnerHistory", "No date in Dinner object to compare to" + e.getMessage());
             e.printStackTrace();
         }
 
         //Only show Dinner between to and from dates chosen
-        for(Dinner d : list) {
-            if(toDate == null) {
-                if(fromDate == null) {
+        for (Dinner d : list) {
+            if (toDate == null) {
+                if (fromDate == null) {
+                    result.add(d);
+                } else if (d.getDate().after(fromDate.getTime())) {
                     result.add(d);
                 }
-                else if (d.getDate().after(fromDate.getTime())) {
+            } else if (d.getDate().before(toDate.getTime())) {
+                if (fromDate == null) {
                     result.add(d);
-                }
-            }
-            else if (d.getDate().before(toDate.getTime())) {
-                if(fromDate == null) {
-                    result.add(d);
-                }
-                else if (d.getDate().after(fromDate.getTime())) {
+                } else if (d.getDate().after(fromDate.getTime())) {
                     result.add(d);
                 }
             }

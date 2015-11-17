@@ -23,7 +23,7 @@ import java.util.Locale;
 
 /**
  * @author Aleksander Kähler, Group B129, Aalborg University
- * TODO: Implement remove ingredient when tapping ingredients in ingredient grid.
+ *         TODO: Implement remove ingredient when tapping ingredients in ingredient grid.
  */
 public class AddDinnerActivity extends AppCompatActivity implements IngredientChooseFragment.DialogDoneListener {
     private static final String TAG = "AddDinnerActivity";
@@ -44,7 +44,7 @@ public class AddDinnerActivity extends AppCompatActivity implements IngredientCh
         setContentView(R.layout.activity_add_dinner);
         Toolbar toolbar = (Toolbar) findViewById(R.id.add_dinner_toolbar);
         setSupportActionBar(toolbar);
-        if(getSupportActionBar() != null) {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
@@ -89,7 +89,7 @@ public class AddDinnerActivity extends AppCompatActivity implements IngredientCh
             @Override
             public void onClick(View v) {
                 DinnerRepository dr = new DinnerRepository(getApplicationContext());
-                if(dinnerName.getText().length() == 0) {
+                if (dinnerName.getText().length() == 0) {
                     Toast.makeText(getApplicationContext(), "Please input a name for the dinner", Toast.LENGTH_SHORT).show();
                 } else {
                     List<Integer> ingredientIDList = new ArrayList<>();

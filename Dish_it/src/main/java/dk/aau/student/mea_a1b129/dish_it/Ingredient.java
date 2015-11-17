@@ -18,14 +18,15 @@ public class Ingredient {
     private String name;
     private int ingredientsID;
     private Category category;
+
     public Ingredient() {
     }
 
     /**
      * Ingredient constructor.
      *
-     * @param name        name of the ingredient - must not be null
-     * @param category    the category of the ingredient, specified in an enum value.
+     * @param name     name of the ingredient - must not be null
+     * @param category the category of the ingredient, specified in an enum value.
      * @see Ingredient.Category
      */
     public Ingredient(@NonNull String name, @NonNull Ingredient.Category category) {
@@ -39,6 +40,7 @@ public class Ingredient {
 
     /**
      * Set the name for the ingredient
+     *
      * @param name Name of the ingredient
      */
     public void setName(@NonNull String name) {

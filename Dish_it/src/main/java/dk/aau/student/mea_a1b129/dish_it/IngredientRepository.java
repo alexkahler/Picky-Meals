@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * @author Aleksander Kähler, Group B129, Aalborg University
- * IngredientRepository to store all of the ingredients used in recipes.
+ *         IngredientRepository to store all of the ingredients used in recipes.
  */
 class IngredientRepository {
     private static final String TAG = "IngredientRepository";
@@ -18,6 +18,7 @@ class IngredientRepository {
 
     /**
      * Class construct. Initializes a new repository to save ingredients.
+     *
      * @param context Context of the app.
      * @see Context
      */
@@ -27,7 +28,8 @@ class IngredientRepository {
 
     /**
      * Insert a new ingredient into the Ingredients Table in the Database.
-     * @param name The name of the Ingredients tag.
+     *
+     * @param name     The name of the Ingredients tag.
      * @param category the category of the ingredients, e.g. meat, vegetable, fruit.
      * @see Ingredient
      */
@@ -42,7 +44,8 @@ class IngredientRepository {
 
     /**
      * Update a new ingredient into the Ingredients Table in the Database.
-     * @param name The name of the Ingredients tag.
+     *
+     * @param name     The name of the Ingredients tag.
      * @param category the category of the ingredients, e.g. meat, vegetable, fruit.
      * @see Ingredient
      */
@@ -54,7 +57,7 @@ class IngredientRepository {
             Log.i(TAG, "SQL: UpdateIngredientsTag() Accessing database");
             dbHelper.getWritableDatabase().update(Ingredient.TABLE_NAME, cv, Ingredient.KEY_ID + " = ? ", new String[]{Integer.toString(id)});
             return true;
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             Log.e(TAG, "Couldn't parse String to number in updateIngredientsTag" + e.getMessage());
             e.printStackTrace();
             return false;
@@ -65,6 +68,7 @@ class IngredientRepository {
 
     /**
      * Returns a specific ingredient at id.
+     *
      * @param id the id of the ingredient to return.
      * @return returns ingredient at the specified id in the database as Cursor-object.
      * @see Cursor
@@ -75,8 +79,8 @@ class IngredientRepository {
         Log.i("SQL", "IngredientRepository: getIngredient() Accessing database");
         Cursor result = dbHelper.getReadableDatabase().rawQuery("SELECT * FROM " + Ingredient.TABLE_NAME + " WHERE " +
                 Ingredient.KEY_ID + " = ?", new String[]{Integer.toString(id)});
-        
-        if(result.moveToFirst()) {
+
+        if (result.moveToFirst()) {
             i.setName(result.getString(result.getColumnIndex(Ingredient.KEY_NAME)));
             i.setCategory(result.getString(result.getColumnIndex(Ingredient.KEY_CATEGORY)));
             i.setIngredientsID(id);
@@ -92,6 +96,7 @@ class IngredientRepository {
 
     /**
      * Returns all of the ingredients tags in the table as a Cursor.
+     *
      * @return ingredients returned in a Ingredients-class list
      * @see Ingredient
      */
@@ -116,8 +121,7 @@ class IngredientRepository {
             while (results.moveToNext());
             results.close();
             return ingredientList;
-        }
-        else {
+        } else {
             results.close();
             ingredientList.add(new Ingredient("No ingredients available :(", Ingredient.Category.Other));
             return ingredientList;
@@ -126,6 +130,7 @@ class IngredientRepository {
 
     /**
      * Delete an ingredient with given ID.
+     *
      * @param id The id of the ingredient that needs to be deleted.
      * @return the amount of rows affected by the deletion.
      */
