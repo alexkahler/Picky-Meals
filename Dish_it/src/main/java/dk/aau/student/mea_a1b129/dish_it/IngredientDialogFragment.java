@@ -2,7 +2,6 @@ package dk.aau.student.mea_a1b129.dish_it;
 
 import android.app.Activity;
 import android.app.DialogFragment;
-import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,10 +15,8 @@ import android.widget.Toast;
 
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link IngredientDialogFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
+ * @author Aleksander Kähler, Group b129, Aalborg University
+ * TODO: Make test to see if activity was resumed after pause.
  */
 public class IngredientDialogFragment extends DialogFragment {
 
