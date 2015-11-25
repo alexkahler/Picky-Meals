@@ -11,6 +11,6 @@
         android:checked="false"
         android:paddingLeft="16dp"
         android:text="Ingredient Item Checkbox"
-        android:textColor="#212121" />
+        android:textColor="@color/textColorSecondary" />
 
 </LinearLayout>

@@ -12,6 +12,6 @@
         android:paddingLeft="8dp"
         android:paddingTop="5dp"
         android:text="Group Item text"
-        android:textColor="#000000"
+        android:textColor="@color/textColor"
         android:textSize="17sp" />
 </LinearLayout>

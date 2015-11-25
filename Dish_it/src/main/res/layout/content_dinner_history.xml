@@ -20,7 +20,8 @@
         android:layout_alignParentTop="true"
         android:paddingLeft="12dp"
         android:text="@string/dinner_history_filter_from"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/textColorSecondary" />
 
     <Button
         android:id="@+id/history_clear_button"
@@ -41,7 +42,8 @@
         android:layout_alignStart="@+id/history_filter_to_button"
         android:paddingLeft="12dp"
         android:text="@string/dinner_history_filter_to"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/textColorSecondary" />
 
     <Button
         android:id="@+id/history_filter_from_button"
@@ -51,7 +53,8 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/history_filter_from_text"
         android:gravity="center_vertical"
-        android:text="@string/dinner_history_choose_date" />
+        android:text="@string/dinner_history_choose_date"
+        android:textColor="@color/textColor" />
 
     <Button
         android:id="@+id/history_filter_to_button"
@@ -61,7 +64,8 @@
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/history_filter_from_text"
         android:gravity="center_vertical"
-        android:text="@string/dinner_history_choose_date" />
+        android:text="@string/dinner_history_choose_date"
+        android:textColor="@color/textColor" />
 
     <View
         android:layout_width="match_parent"

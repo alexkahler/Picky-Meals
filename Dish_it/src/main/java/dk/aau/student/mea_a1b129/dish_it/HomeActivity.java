@@ -24,7 +24,6 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -33,7 +32,14 @@ public class HomeActivity extends AppCompatActivity
     private static String USERNAME = null;
 
     private static Context context;
+    private static RecommendationEngine re;
     private int currentlySuggestedDinnerID;
+    private DinnerRepository dr;
+    private IngredientRepository ir;
+    private TextView dinnerTitle;
+    private TextView dinnerDescription;
+    private RatingBar dinnerRating;
+    private TextView dinnerCategory;
 
 
     public static Context getContext() {
@@ -54,6 +60,11 @@ public class HomeActivity extends AppCompatActivity
         populateViews();
         populateNavigationDrawer();
         getNewDinnerSuggestion();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     private void populateViews() {
@@ -78,6 +89,16 @@ public class HomeActivity extends AppCompatActivity
                 }
             }
         });
+
+        //Find the views
+        dinnerTitle = (TextView) findViewById(R.id.home_dinner_title);
+        dinnerDescription = (TextView) findViewById(R.id.home_dinner_description);
+        dinnerRating = (RatingBar) findViewById(R.id.home_dinner_rating);
+        dinnerCategory = (TextView) findViewById(R.id.home_dinner_category);
+
+        dr = new DinnerRepository(context);
+        ir = new IngredientRepository(context);
+        re = new RecommendationEngine(ir, dr);
     }
 
     private void populateNavigationDrawer() {
@@ -103,22 +124,11 @@ public class HomeActivity extends AppCompatActivity
 
 
     private void getNewDinnerSuggestion() {
-        // Make the repositories.
-        DinnerRepository dr = new DinnerRepository(context);
-        IngredientRepository ir = new IngredientRepository(context);
-
-        //Find the views
-        TextView dinnerTitle = (TextView) findViewById(R.id.home_dinner_title);
-        TextView dinnerDescription = (TextView) findViewById(R.id.home_dinner_description);
-        RatingBar dinnerRating = (RatingBar) findViewById(R.id.home_dinner_rating);
-        TextView dinnerCategory = (TextView) findViewById(R.id.home_dinner_category);
-
-        //Get a random suggestion TODO: Make Algorithm class for Dinner suggestions.
-        List<Dinner> allDinners = dr.getDinnerList();
-        if (allDinners == null || allDinners.isEmpty()) {
+        if (dr.getDinnerList() == null || dr.getDinnerList().isEmpty()) {
             dinnerTitle.setText(getResources().getText(R.string.home_dinner_no_dinner_found));
         } else {
-            currentlySuggestedDinnerID = allDinners.get(new Random().nextInt(allDinners.size())).getDinnerID();
+            re.generateNewRecommendation();
+            currentlySuggestedDinnerID = re.getDinnerRecommendation();
             Log.i(TAG, "DinnerID suggested: " + currentlySuggestedDinnerID);
             Dinner d = dr.getDinner(currentlySuggestedDinnerID);
             //Set the Dinner context to views.
@@ -168,6 +178,10 @@ public class HomeActivity extends AppCompatActivity
             Intent i = new Intent(context, PreferencesActivity.class);
             startActivity(i);
             return true;
+        }
+        if (id == R.id.action_refresh) {
+            re.resetEngine();
+            getNewDinnerSuggestion();
         }
         return super.onOptionsItemSelected(item);
     }

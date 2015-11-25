@@ -29,7 +29,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="top"
             android:text="Dinner Title"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="@color/textColor" />
 
         <TextView
             android:id="@+id/home_dinner_category"
@@ -37,7 +38,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="top"
             android:text="Dinner Category"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@color/textColorSecondary" />
 
         <TextView
             android:id="@+id/home_dinner_description"
@@ -46,6 +48,7 @@
             android:layout_gravity="top"
             android:text="Dinner Description"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/textColorSecondary"
             android:textStyle="italic" />
 
         <RatingBar

@@ -3,6 +3,7 @@
 
 
     <string name="action_settings">Settings</string>
+    <string name="action_refresh">Refresh</string>
 
     <!-- App drawer menu strings -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
