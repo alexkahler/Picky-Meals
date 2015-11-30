@@ -9,6 +9,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_profile_pic">Profile picture</string>
+    <string name="nav_header_level_prefix">Level: </string>
     <string name="nav_title_tools">Tools</string>
     <string name="nav_home">Get a suggestion</string>
     <string name="nav_dinner_history">Dinner History</string>

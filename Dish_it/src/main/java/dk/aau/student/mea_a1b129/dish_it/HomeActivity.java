@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,18 +27,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        GameEngine.ExperienceChangeable {
+
     private static final String TAG = HomeActivity.class.getSimpleName();
     private static final int CURRENT_VERSION = 1;
     private static String USERNAME = null;
 
     private static Context context;
     private static RecommendationEngine re;
+    private static GameEngine ge;
     private int currentlySuggestedDinnerID;
     private DinnerRepository dr;
     private IngredientRepository ir;
-    private TextView dinnerTitle;
-    private TextView dinnerDescription;
+    private TextView dinnerTitle, dinnerDescription, userLevel;
+    private ProgressBar experienceBar;
     private RatingBar dinnerRating;
     private TextView dinnerCategory;
 
@@ -99,6 +103,7 @@ public class HomeActivity extends AppCompatActivity
         dr = new DinnerRepository(context);
         ir = new IngredientRepository(context);
         re = new RecommendationEngine(ir, dr);
+        ge = new GameEngine(context);
     }
 
     private void populateNavigationDrawer() {
@@ -115,10 +120,9 @@ public class HomeActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         View headerLayout = navigationView.inflateHeaderView(R.layout.nav_header_home_activity);
 
-        TextView userLevel = (TextView) headerLayout.findViewById(R.id.nav_header_level_text);
+        userLevel = (TextView) headerLayout.findViewById(R.id.nav_header_level_text);
+        experienceBar = (ProgressBar) headerLayout.findViewById(R.id.nav_header_experience);
         TextView username = (TextView) headerLayout.findViewById(R.id.nav_header_name_title);
-
-        userLevel.setText("Level 1");
         username.setText(USERNAME);
     }
 
@@ -146,6 +150,13 @@ public class HomeActivity extends AppCompatActivity
             IngredientGridAdapter iga = new IngredientGridAdapter(this, ingredientList);
             GridView gridView = (GridView) findViewById(R.id.home_dinner_gridview);
             gridView.setAdapter(iga);
+
+
+            Log.d(TAG, "Current Level: " + ge.getCurrentLevel());
+            Log.d(TAG, "Adding 1000XP");
+            ge.addExperience(1000);
+            updateExperience(ge.getCurrentExperience(), ge.experienceForNextLevel(), ge.getCurrentLevel());
+            Log.d(TAG, "Current XP: " + ge.getCurrentExperience());
         }
     }
 
@@ -225,5 +236,13 @@ public class HomeActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void updateExperience(double currentExperience, double experienceForNextLevel, long currentLevel) {
+
+        userLevel.setText(getResources().getString(R.string.nav_header_level_prefix) + currentLevel);
+        experienceBar.setMax((int)experienceForNextLevel);
+        experienceBar.setProgress((int)currentExperience);
     }
 }
