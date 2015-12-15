@@ -20,6 +20,7 @@ import java.util.List;
 
 /**
  * A fragment representing a list of Items.
+ * TODO: Debug multiple ingredient-s
  */
 public class IngredientChooseFragment extends DialogFragment {
     private static final String TAG = "ChooseIngredientFrag";
@@ -104,19 +105,15 @@ public class IngredientChooseFragment extends DialogFragment {
         List<Ingredient> ingredientList = ir.getAllIngredients();
         List<Ingredient.Category> ingredientCategories = new ArrayList<>(Arrays.asList(Ingredient.Category.values()));
         HashMap<Ingredient.Category, List<Ingredient>> ingredients = new HashMap<>();
-        Log.v(TAG, "Size on ingredientList: " + ingredientList.size());
         for (Ingredient.Category c : ingredientCategories) {
             List<Ingredient> temp = new ArrayList<>();
             for (Ingredient i : ingredientList) {
-                Log.v(TAG, "Comparing " + c.toString() + " to " + i.getCategory());
                 if (c.equals(i.getCategory())) {
                     temp.add(i);
-                    Log.v(TAG, "Adding ingredient: " + i.toString());
                 }
             }
             if (temp.size() != 0) {
                 ingredients.put(c, temp);
-                Log.v(TAG, "Adding list " + temp.toString() + " " + c.toString());
             }
 
         }

@@ -1,5 +1,8 @@
 package dk.aau.student.mea_a1b129.dish_it;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
@@ -12,32 +15,16 @@ import java.util.List;
  */
 class RecommendationEngine {
 
-    /*
-    Class variables:
-    Repositories
-    DinnerList
-    Last recommendation generated: - save in UserSharePrefs?
-
-
-    Preferences input:
-    Meal variables:
-    - When eaten
-    - Meal rating
-
-    User variables:
-    - Variedness meals
-    - Price
-    - Available Ingredients
-     */
-
     private static final String TAG = RecommendationEngine.class.getSimpleName();
     private IngredientRepository ir;
     private DinnerRepository dr;
     private static int recommendedDinner;
     private static final int RATING_TOTAL = 5;
     private int ratingWeight = 2;
-    private int variedWeight = 1;
-    private static final int variedLimit = 7;
+    private boolean ratingEnabled;
+    private int variedWeight = 0;
+    private static final int variedLimit = 0;
+    private boolean variedEnabled;
     private static List<Integer> previouslyRecommended = new ArrayList<>();
 
     /**
@@ -45,9 +32,12 @@ class RecommendationEngine {
      * @param ir IngredientRepository (not implemented yet)
      * @param dr DinnerRepository which will feed Dinners to the RecommendationEngine
      */
-    public RecommendationEngine(@NonNull IngredientRepository ir, @NonNull DinnerRepository dr) {
+    public RecommendationEngine(@NonNull Context context, @NonNull IngredientRepository ir, @NonNull DinnerRepository dr) {
         this.ir = ir;
         this.dr = dr;
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        ratingEnabled = sp.getBoolean("ratingKey", true);
+        variedEnabled = sp.getBoolean("variedKey", true);
     }
 
     /**
@@ -71,18 +61,24 @@ class RecommendationEngine {
 
         //set highest dinner score to 0 before we begin.
         double dinnerScore = 0;
+        double ratingScore = 0;
+        double variedScore = 0;
 
         //iterate through all of the dinners and figure out, which dinner has the highest Dinner Score.
         for(Dinner d : dinnerList) {
-            float ratingScore = (d.getRating() / RATING_TOTAL) * ratingWeight;
-            double variedScore = ((double)(Calendar.getInstance().getTime().getTime() - d.getDate().getTime()) /
-                    (Calendar.getInstance().getTime().getTime() - dateLimit.getTime().getTime())) * variedWeight;
+            if(ratingEnabled) {
+                ratingScore = (((double)d.getRating()/RATING_TOTAL)*ratingWeight);
+            }
+            if(variedEnabled) {
+                variedScore = ((double) (Calendar.getInstance().getTime().getTime() - d.getDate().getTime()) /
+                        (Calendar.getInstance().getTime().getTime() - dateLimit.getTime().getTime())) * variedWeight;
+            }
 
             //Add all of the scores together for a final score.
-            double score = ratingScore + variedScore;
+            double score = ratingScore; // + variedScore;
 
             //If this was the highest score then save the dinner as our current recommended dinner.
-            if (score >= dinnerScore && !previouslyRecommended.contains(d.getDinnerID())) {
+            if (score > dinnerScore && !previouslyRecommended.contains(d.getDinnerID())) {
                 recommendedDinner = d.getDinnerID();
 
                 //Assign our new top-score to Dinner Score.

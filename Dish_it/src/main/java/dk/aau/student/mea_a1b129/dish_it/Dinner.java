@@ -9,6 +9,7 @@ import java.util.List;
 /*
 Dinner class for dinner objects to populate the app.
 TODO: Make a constructor method for Class.
+TODO: Make cuisine a database dependent selection.
  */
 
 /**
@@ -24,6 +25,7 @@ public class Dinner implements Comparable {
     public static final String KEY_INGREDIENTS_ID = "ingredients_id";
     public static final String KEY_RATING = "rating";
     public static final String KEY_DATE = "date";
+    public static final String KEY_PRICE = "price";
     private final List<Integer> ingredientID = new ArrayList<>();
     private int dinnerID;
     private String name;
@@ -31,6 +33,7 @@ public class Dinner implements Comparable {
     private String cuisine;
     private int rating;
     private Date date;
+    private double price;
 
     public Dinner() {
     }
@@ -98,6 +101,14 @@ public class Dinner implements Comparable {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 
     /**

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="8dp">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/badge_grid_item_image"
+        android:scaleType="fitCenter"
+        android:maxHeight="80dp"
+        android:maxWidth="80dp"
+        android:src="@drawable/unknown_badge"
+        android:adjustViewBounds="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:minHeight="80dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/badge_grid_item_description"
+        style="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@color/textColor"
+        android:layout_below="@+id/badge_grid_item_image"
+        android:layout_alignParentStart="true"
+        android:text="@string/statistics_unknown_badge" />
+</RelativeLayout>

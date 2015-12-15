@@ -73,6 +73,9 @@ public class DinnerHistory extends AppCompatActivity {
         updateAdapter(updateDinnerList());
     }
 
+    /*
+    Find the views in the Layout XML
+     */
     private void findViewsByID() {
         filterFromButton = (Button) findViewById(R.id.history_filter_from_button);
         filterToButton = (Button) findViewById(R.id.history_filter_to_button);
@@ -80,6 +83,9 @@ public class DinnerHistory extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.history_list_view);
     }
 
+    /*
+    Set on click listeners to buttons.
+     */
     private void setOnClickListeners() {
         final Calendar calendar = Calendar.getInstance();
 
@@ -143,35 +149,51 @@ public class DinnerHistory extends AppCompatActivity {
         });
     }
 
+    /*
+    Here we populate the main list view in the activity with meals from DinnerRepository. We use the DinnerListAdapter for this.
+     */
     private void populateListView() {
         adapter = new DinnerListAdapter(this.getApplicationContext(), updateDinnerList());
         listView.setAdapter(adapter);
 
+        //Be aware: Convoluted code ahead. Here we set a listener for long presses.
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                //Save the selected item.
                 final int pos = position;
                 view.setSelected(true);
 
+                //Build the buttons in the dialog, which we'll show in a second.
                 DialogInterface.OnClickListener alert = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        //Test to find out which button was pressed
                         switch (which) {
+                            //If it was Cancel or No
                             case DialogInterface.BUTTON_NEGATIVE: {
+                                //Then we dismiss the pop-up and don't do anything
                                 dialog.dismiss();
                                 break;
                             }
+                            //If it was Yes
                             case DialogInterface.BUTTON_POSITIVE: {
+                                //Then we try to delete the selected dinner. We store the result of the deletion attempt in a boolean
                                 boolean isDeleted = dr.deleteDinner(((Dinner) adapter.getItem(pos)).getDinnerID());
                                 Log.i(TAG, "Dinner deleted: " + isDeleted);
+                                //If the dinner was deleted properly
                                 if (isDeleted) {
+                                    new GameEngine(getApplicationContext()).trackProgression(GameEngine.ProgressionType.DINNERS_DELETED, 1);
+                                    //We notify the DinnerListAdapter that data has changed and needs updating.
                                     updateAdapter(updateDinnerList());
                                 }
                             }
                         }
                     }
                 };
+                //And now.. we build...
                 AlertDialog.Builder builder = new AlertDialog.Builder(DinnerHistory.this);
+                //Yea - why make variables, when everything can be written in 1 line of code..
                 builder.setTitle(R.string.dinner_history_delete_dinner_title)
                         .setMessage(getResources().getString(R.string.dinner_history_delete_dinner_message_pt1)
                                 + " " + ((Dinner) adapter.getItem(pos)).getName()
@@ -180,12 +202,15 @@ public class DinnerHistory extends AppCompatActivity {
                         .setNegativeButton(R.string.dinner_history_delete_dinner_cancel, alert)
                         .show();
 
+                //Important fucker.
                 return true;
             }
         });
+        //Listener for what happens when we press normally on an item.
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //We start a new intent and put the DinnerID into an Extra for the AddDinnerActivity to edit.
                 Intent i = new Intent(getApplicationContext(), AddDinnerActivity.class);
                 i.putExtra("dinnerID", ((Dinner) adapter.getItem(position)).getDinnerID());
                 startActivity(i);
@@ -193,18 +218,25 @@ public class DinnerHistory extends AppCompatActivity {
         });
     }
 
+    /**
+     * Update and return a list of the latest dinners.
+     * @return updated list of Dinners.
+     */
     private List<Dinner> updateDinnerList() {
+        //Make a list to save our results
         List<Dinner> result = new ArrayList<>();
         dr = new DinnerRepository(this.getApplicationContext());
         List<Dinner> list = dr.getDinnerList();
         try {
+            //Here we sort the list by using the Comparable interface.
             Collections.sort(list);
         } catch (NullPointerException e) {
             Log.e("DinnerHistory", "No date in Dinner object to compare to" + e.getMessage());
             e.printStackTrace();
         }
 
-        //Only show Dinner between to and from dates chosen
+        //Only show Dinner between to and from dates chosen.
+        //For dinner d in our list
         for (Dinner d : list) {
             if (toDate == null) {
                 if (fromDate == null) {
@@ -223,6 +255,7 @@ public class DinnerHistory extends AppCompatActivity {
         return result;
     }
 
+    //Little helper method to update our DinnerListAdapter class.
     private void updateAdapter(List<Dinner> newData) {
         adapter.updateDinnerList(newData);
         adapter.notifyDataSetChanged();

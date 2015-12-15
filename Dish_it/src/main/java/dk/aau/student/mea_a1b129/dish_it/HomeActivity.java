@@ -23,8 +23,18 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
+
+/**
+ * @author Aleksander Kähler, Group B129, Aalborg University
+ */
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -44,6 +54,7 @@ public class HomeActivity extends AppCompatActivity
     private ProgressBar experienceBar;
     private RatingBar dinnerRating;
     private TextView dinnerCategory;
+    private Calendar lastLogin;
 
 
     public static Context getContext() {
@@ -61,9 +72,38 @@ public class HomeActivity extends AppCompatActivity
         context = getApplicationContext();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         USERNAME = preferences.getString("username", "Anonymous");
+
+
+        ge = new GameEngine(context);
         populateViews();
         populateNavigationDrawer();
         getNewDinnerSuggestion();
+
+        try {
+
+            lastLogin.setTime(new SimpleDateFormat("dd-MM-yyyy", new Locale("da", "DK")).parse(preferences.getString("lastLogin", null)));
+        } catch (Exception e ) {
+            lastLogin = Calendar.getInstance(new Locale("da", "DK"));
+            Log.e(TAG, "Couldn't parse last login date from string - maybe there wasn't one? " + e.getMessage());
+        }
+
+        //Create a new calendar with today's date and clear the time from it.
+        Calendar currentCalendar = Calendar.getInstance(new Locale("da", "DK"));
+        currentCalendar.clear(Calendar.HOUR);
+        currentCalendar.clear(Calendar.MINUTE);
+        currentCalendar.clear(Calendar.SECOND);
+        currentCalendar.clear(Calendar.MILLISECOND);
+        //Compare the dates and see if today's date is after last login.
+        if(currentCalendar.after(lastLogin)) {
+            ge.addExperience(50);
+            //Run the interface.
+            updateExperience(ge.getCurrentExperience(), ge.experienceForNextLevel(), ge.getCurrentLevel());
+            Toast.makeText(context, "First login today! +50XP", Toast.LENGTH_SHORT).show();
+            ge.trackProgression(GameEngine.ProgressionType.APP_OPENED, 1);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString("lastLogin", new SimpleDateFormat("dd-MM-yyyy", new Locale("da", "DK")).format(Calendar.getInstance().getTime()));
+            editor.apply();
+        }
     }
 
     @Override
@@ -78,6 +118,7 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 getNewDinnerSuggestion();
+                ge.trackProgression(GameEngine.ProgressionType.DINNERS_SUGGESTED, 1);
             }
         });
 
@@ -102,8 +143,8 @@ public class HomeActivity extends AppCompatActivity
 
         dr = new DinnerRepository(context);
         ir = new IngredientRepository(context);
-        re = new RecommendationEngine(ir, dr);
-        ge = new GameEngine(context);
+        re = new RecommendationEngine(context, ir, dr);
+
     }
 
     private void populateNavigationDrawer() {
@@ -124,6 +165,7 @@ public class HomeActivity extends AppCompatActivity
         experienceBar = (ProgressBar) headerLayout.findViewById(R.id.nav_header_experience);
         TextView username = (TextView) headerLayout.findViewById(R.id.nav_header_name_title);
         username.setText(USERNAME);
+        updateExperience(ge.getCurrentExperience(), ge.experienceForNextLevel(), ge.getCurrentLevel());
     }
 
 
@@ -150,13 +192,6 @@ public class HomeActivity extends AppCompatActivity
             IngredientGridAdapter iga = new IngredientGridAdapter(this, ingredientList);
             GridView gridView = (GridView) findViewById(R.id.home_dinner_gridview);
             gridView.setAdapter(iga);
-
-
-            Log.d(TAG, "Current Level: " + ge.getCurrentLevel());
-            Log.d(TAG, "Adding 1000XP");
-            ge.addExperience(1000);
-            updateExperience(ge.getCurrentExperience(), ge.experienceForNextLevel(), ge.getCurrentLevel());
-            Log.d(TAG, "Current XP: " + ge.getCurrentExperience());
         }
     }
 
@@ -241,7 +276,7 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public void updateExperience(double currentExperience, double experienceForNextLevel, long currentLevel) {
 
-        userLevel.setText(getResources().getString(R.string.nav_header_level_prefix) + currentLevel);
+        userLevel.setText(getResources().getString(R.string.nav_header_level_prefix) + " " + currentLevel);
         experienceBar.setMax((int)experienceForNextLevel);
         experienceBar.setProgress((int)currentExperience);
     }

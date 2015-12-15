@@ -27,7 +27,7 @@ import java.util.Locale;
  */
 public class AddDinnerActivity extends AppCompatActivity implements IngredientChooseFragment.DialogDoneListener {
     private static final String TAG = "AddDinnerActivity";
-    private EditText dinnerName, dinnerCategory, dinnerDescription;
+    private EditText dinnerName, dinnerCategory, dinnerDescription, dinnerPrice;
     private Calendar dinnerDate;
     private TextView dateText;
     private RatingBar dinnerRating;
@@ -59,6 +59,7 @@ public class AddDinnerActivity extends AppCompatActivity implements IngredientCh
             dinnerDescription.setText(dr.getDinner(dinnerID).getDescription());
             dinnerRating.setRating(dr.getDinner(dinnerID).getRating());
             dateText.setText(new SimpleDateFormat("dd-MM-yyyy", new Locale("da", "DK")).format(Calendar.getInstance().getTime()));
+            dinnerPrice.setText(dr.getDinner(dinnerID).getPrice() + "");
             IngredientRepository ir = new IngredientRepository(getApplicationContext());
             for (int i : dr.getDinner(dinnerID).getIngredientID()) {
                 ingredientList.add(ir.getIngredient(i));
@@ -68,13 +69,18 @@ public class AddDinnerActivity extends AppCompatActivity implements IngredientCh
 
     }
 
+    /*
+    Find all of the related views in the XML schema.
+     */
     private void findViewsByID() {
         dinnerName = (EditText) findViewById(R.id.add_dinner_edit_dinner_name);
         dinnerCategory = (EditText) findViewById(R.id.add_dinner_edit_category);
         dinnerDescription = (EditText) findViewById(R.id.add_dinner_edit_dinner_description);
         dinnerRating = (RatingBar) findViewById(R.id.add_dinner_edit_rating);
         dateText = (TextView) findViewById(R.id.add_dinner_date_chosen);
+        dinnerPrice = (EditText) findViewById(R.id.add_dinner_edit_price);
         dinnerDate = Calendar.getInstance();
+        //We want to set the date to the current date
         dateText.setText(new SimpleDateFormat("dd-MM-yyyy", new Locale("da", "DK"))
                 .format(dinnerDate.getTime()));
         chooseDate = (Button) findViewById(R.id.add_dinner_choose_date_button);
@@ -84,14 +90,20 @@ public class AddDinnerActivity extends AppCompatActivity implements IngredientCh
         gridView = (GridView) findViewById(R.id.add_dinner_ingredient_gridview);
     }
 
+    /*
+    Here we assign listeners and actions to our buttons.
+     */
     private void assignListeners() {
+        //First the save button
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 DinnerRepository dr = new DinnerRepository(getApplicationContext());
+                //If the user hasn't input a name then we stop and ask them to do so.
                 if (dinnerName.getText().length() == 0) {
                     Toast.makeText(getApplicationContext(), "Please input a name for the dinner", Toast.LENGTH_SHORT).show();
                 } else {
+                    //Go through all of the ingredients and add their respective ID's.
                     List<Integer> ingredientIDList = new ArrayList<>();
                     for (Ingredient i : ingredientList) {
                         ingredientIDList.add(i.getIngredientsID());
@@ -99,6 +111,13 @@ public class AddDinnerActivity extends AppCompatActivity implements IngredientCh
                     //If we're updating a dinner
                     if (dinnerID > 0) {
                         Log.d(TAG, "Updating dinner with id: " + dinnerID);
+                        double price = 0;
+                        try {
+                            Double.parseDouble(dinnerPrice.getText().toString());
+                        } catch(NumberFormatException e) {
+                            Log.e(TAG, "Can't format nothing..." + e.getMessage());
+                            e.printStackTrace();
+                        }
                         dr.updateDinner(
                                 dinnerID,
                                 dinnerName.getText().toString(),
@@ -106,26 +125,39 @@ public class AddDinnerActivity extends AppCompatActivity implements IngredientCh
                                 dinnerCategory.getText().toString(),
                                 ingredientIDList,
                                 Math.round(dinnerRating.getRating()),
-                                dinnerDate.getTime());
+                                dinnerDate.getTime(),
+                                price);
                     }
                     //else make a new dinner
                     else {
                         Log.d(TAG, "Inserting dinner");
+                        double price = 0;
+                        try {
+                            Double.parseDouble(dinnerPrice.getText().toString());
+                        } catch(NumberFormatException e) {
+                            Log.e(TAG, "Can't format nothing..." + e.getMessage());
+                            e.printStackTrace();
+                        }
                         dr.insertDinner(
                                 dinnerName.getText().toString(),
                                 dinnerDescription.getText().toString(),
                                 dinnerCategory.getText().toString(),
                                 ingredientIDList,
                                 Math.round(dinnerRating.getRating()),
-                                dinnerDate.getTime());
-
+                                dinnerDate.getTime(),
+                                price);
+                        GameEngine ge = new GameEngine(getApplicationContext());
+                        ge.addExperience(100);
+                        ge.trackProgression(GameEngine.ProgressionType.DINNERS_ADDED, 1);
+                        Toast.makeText(getApplicationContext(), getString(R.string.add_dinner_100XP), Toast.LENGTH_SHORT).show();
                     }
-                    Toast.makeText(getApplicationContext(), "Dinner saved!", Toast.LENGTH_SHORT).show();
+                    //Finish the activity and return to parent activity.
                     finish();
                 }
             }
         });
 
+        //If the cancel button was pressed, then we act as if the pressed the back button on the phone.
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -133,12 +165,15 @@ public class AddDinnerActivity extends AppCompatActivity implements IngredientCh
             }
         });
 
+        //Here we open up the Fragment where we can choose ingredients.
         chooseIngredientsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 IngredientChooseFragment icf = new IngredientChooseFragment();
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
+                //We add this fragment to the backstack, so if the user presses the backbutton, only the fragment is closed.
                 ft.addToBackStack(null);
+                //If the ingreident is not empty, then we put the list into a bundle, so the fragment can retrieve it.
                 Log.d(TAG, "In onClick method assigning ingredients to Bundle. ingredientsList: " + ingredientList);
                 if (!ingredientList.isEmpty()) {
                     Log.d(TAG, "In if statement with ingredients list " + ingredientList);
@@ -147,10 +182,12 @@ public class AddDinnerActivity extends AppCompatActivity implements IngredientCh
                     b.putSerializable("ingredientsID", ingredientList);
                     icf.setArguments(b);
                 }
+                //Start the fragment.
                 icf.show(ft, "choose_ingredient_fragment");
             }
         });
 
+        //This part is for showing a date picker, when the Choose Date button is pressed.
         Calendar calendar = Calendar.getInstance();
         datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -170,12 +207,20 @@ public class AddDinnerActivity extends AppCompatActivity implements IngredientCh
         });
     }
 
+    /*
+    A quick helper function to update our grid with ingredients.
+     */
     private void updateAdapter() {
         iga = new IngredientGridAdapter(getApplicationContext(), ingredientList);
         gridView.setAdapter(iga);
         iga.notifyDataSetChanged();
     }
 
+    /**
+     * Interface required method from IngredientChooseFragment
+     * @param state whether or not the method was successfully called.
+     * @param list the new list of ingredients.
+     */
     @Override
     public void onDone(boolean state, ArrayList<Ingredient> list) {
         Log.i("AddDinnerActivity", "Got list from fragment: " + list.toString());

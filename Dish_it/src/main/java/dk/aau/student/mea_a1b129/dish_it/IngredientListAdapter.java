@@ -81,6 +81,7 @@ class IngredientListAdapter extends BaseExpandableListAdapter {
     public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         final Ingredient ingredient = (Ingredient) getChild(groupPosition, childPosition);
 
+        //If we're editing ingredients, then choose this layout mode
         if (inEditMode) {
             if (convertView == null) {
                 LayoutInflater inflater = (LayoutInflater) context
@@ -99,8 +100,10 @@ class IngredientListAdapter extends BaseExpandableListAdapter {
 
             final CheckBox ingredientItem = (CheckBox) convertView
                     .findViewById(R.id.ingredient_list_item_checkbox);
+
+            //Go through the list and add a tick to our chosen ingredients
             for (Ingredient i : chosenIngredients) {
-                if (i.getIngredientsID() == ingredient.getIngredientsID()) {
+                if (getGroup(groupPosition).equals(i.getCategory().toString()) && i.getIngredientsID() == ingredient.getIngredientsID()) {
                     ingredientItem.setChecked(true);
                 }
             }

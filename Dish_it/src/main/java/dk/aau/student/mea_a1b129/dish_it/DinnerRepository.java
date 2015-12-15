@@ -44,7 +44,7 @@ class DinnerRepository {
      * @param rating        the meals rating
      * @return true if insert was successful
      */
-    public boolean insertDinner(String name, String description, String cuisine, List<Integer> ingredientsID, int rating, Date date) {
+    public boolean insertDinner(String name, String description, String cuisine, List<Integer> ingredientsID, int rating, Date date, double price) {
         ContentValues cv = new ContentValues();
         if (name != null) {
             cv.put(Dinner.KEY_NAME, name);
@@ -56,6 +56,7 @@ class DinnerRepository {
         cv.put(Dinner.KEY_INGREDIENTS_ID, ingredientsID.toString());
         cv.put(Dinner.KEY_RATING, rating);
         cv.put(Dinner.KEY_DATE, new SimpleDateFormat("dd-MM-yyyy", new Locale("da", "DK")).format(date));
+        cv.put(Dinner.KEY_PRICE, price);
         Log.d("SQL", "DinnerRepository, insertDinner() Accessing database");
         dbHelper.getWritableDatabase().insert(Dinner.TABLE_NAME, null, cv);
         dbHelper.close();
@@ -75,7 +76,7 @@ class DinnerRepository {
      * @return returns true if the dinner was successfully updated.
      * @see Dinner
      */
-    public boolean updateDinner(int id, @Nullable String name, @Nullable String description, @Nullable String category, @Nullable List<Integer> ingredientID, int rating, @Nullable Date date) {
+    public boolean updateDinner(int id, @Nullable String name, @Nullable String description, @Nullable String category, @Nullable List<Integer> ingredientID, int rating, @Nullable Date date, @Nullable double price) {
         ContentValues cv = new ContentValues();
         if (id >= -1) {
             if (name != null) {
@@ -93,6 +94,7 @@ class DinnerRepository {
             if (date != null) {
                 cv.put(Dinner.KEY_DATE, new SimpleDateFormat("dd-MM-yyyy", new Locale("da", "DK")).format(date));
             }
+            cv.put(Dinner.KEY_PRICE, price);
             cv.put(Dinner.KEY_RATING, rating);
             if (dbHelper.getWritableDatabase().update(Dinner.TABLE_NAME, cv, Dinner.KEY_ID + " = ?", new String[]{id + ""}) >= 0) {
                 return true;
@@ -131,6 +133,7 @@ class DinnerRepository {
                 d.setDescription(results.getString(results.getColumnIndex(Dinner.KEY_DESCRIPTION)));
                 d.setCuisine(results.getString(results.getColumnIndex(Dinner.KEY_CUISINE)));
                 d.setRating(results.getInt(results.getColumnIndex(Dinner.KEY_RATING)));
+                d.setPrice(results.getDouble(results.getColumnIndex(Dinner.KEY_PRICE)));
                 String[] raw = results.getString(results.getColumnIndex(Dinner.KEY_INGREDIENTS_ID)).replaceAll("[^1-9,]", "").split(",");
                 for (String s : raw) {
                     try {
@@ -185,10 +188,10 @@ class DinnerRepository {
                 d.setDescription(results.getString(results.getColumnIndex(Dinner.KEY_DESCRIPTION)));
                 d.setCuisine(results.getString(results.getColumnIndex(Dinner.KEY_CUISINE)));
                 d.setRating(results.getInt(results.getColumnIndex(Dinner.KEY_RATING)));
+                d.setPrice(results.getDouble(results.getColumnIndex(Dinner.KEY_PRICE)));
                 try {
                     d.setDate(new SimpleDateFormat("dd-MM-yyyy", new Locale("da", "DK"))
                             .parse(results.getString(results.getColumnIndex(Dinner.KEY_DATE))));
-                    //System.out.println("Parsed the date object form database" + format.parse(t).toString());
                 } catch (ParseException e) {
                     Log.e("ParseException", "Couldn't parse String to Date-object in DinnerRepository.getDinnerList()");
                 }
@@ -196,7 +199,7 @@ class DinnerRepository {
                 String[] raw = results.getString(results.getColumnIndex(Dinner.KEY_INGREDIENTS_ID)).replaceAll("[^1-9,]", "").split(",");
                 for (String s : raw) {
                     try {
-                        d.addIngredients(Integer.parseInt(s));
+                        d.addIngredients(Integer.parseInt(s)); //TODO: Somethings is throwing NumberFormatException here...
                     } catch (NumberFormatException e) {
                         Log.e("DinnerRepository", "Couldn't parseInt at Dinner.getDinnerList " + e.toString());
                     }

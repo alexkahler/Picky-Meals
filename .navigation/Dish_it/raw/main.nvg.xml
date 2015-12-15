@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<navigationModel
+  ns = "http://schemas.android.com?import=com.android.tools.idea.editors.navigation.model.*">
+  <locations  
+    class = "java.util.ArrayList">
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "dk.aau.student.mea_a1b129.dish_it.StatisticsActivity"/>
+      <point      
+        x = "4276"      
+        y = "596"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "dk.aau.student.mea_a1b129.dish_it.AddDinnerActivity"/>
+      <point      
+        x = "2836"      
+        y = "188"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "dk.aau.student.mea_a1b129.dish_it.IngredientEditActivity"/>
+      <point      
+        x = "5584"      
+        y = "408"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "dk.aau.student.mea_a1b129.dish_it.DinnerHistory"/>
+      <point      
+        x = "5576"      
+        y = "2800"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "dk.aau.student.mea_a1b129.dish_it.HomeActivity"/>
+      <point      
+        x = "1180"      
+        y = "60"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "dk.aau.student.mea_a1b129.dish_it.PreferencesActivity"/>
+      <point      
+        x = "1364"      
+        y = "2756"/>
+    </statePointEntry>
+  </locations>
+</navigationModel>

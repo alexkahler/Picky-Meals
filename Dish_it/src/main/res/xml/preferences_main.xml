@@ -5,7 +5,8 @@
         <EditTextPreference
             android:hint="@string/preferences_your_name_edit"
             android:key="username"
-            android:title="@string/preferences_your_name_title" />
+            android:title="@string/preferences_your_name_title"
+            android:summary=""/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/preferences_ingredients_category">
 
@@ -16,5 +17,18 @@
                 android:targetPackage="dk.aau.student.mea_a1b129.dish_it" />
 
         </PreferenceScreen>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/preferences_recommendation_category"
+        android:summary="@string/preferences_recommendation_summary">
+        <CheckBoxPreference
+            android:title="@string/preferences_recommendation_rating_title"
+            android:key="ratingKey"
+            android:defaultValue="true"
+            android:summary="@string/preferences_recommendation_rating_summary"/>
+        <CheckBoxPreference
+            android:title="@string/preferences_recommendation_history_title"
+            android:key="variedKey"
+            android:defaultValue="true"
+            android:summary="@string/preferences_recommendation_history_summary"/>
     </PreferenceCategory>
 </PreferenceScreen>

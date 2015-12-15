@@ -14,7 +14,7 @@
     <string name="nav_home">Get a suggestion</string>
     <string name="nav_dinner_history">Dinner History</string>
     <string name="nav_dinner_plan">Dinner plan</string>
-    <string name="nav_statistics">Your statistics</string>
+    <string name="nav_statistics">Your Profile</string>
     <string name="nav_feedback">Feedback</string>
     <string name="nav_preferences">Preferences</string>
     <string name="nav_settings">Settings</string>
@@ -46,25 +46,33 @@
     <string name="add_dinner_edit_dinner_description">Enter a description of the dinner&#8230;</string>
     <string name="add_dinner_category">Dinner Category:</string>
     <string name="add_dinner_edit_category">Enter a category&#8230;</string>
+    <string name="add_dinner_price">Price:</string>
+    <string name="add_dinner_price_currency">DKK: </string>
     <string name="add_dinner_rating">Rate the Dinner:</string>
     <string name="add_dinner_choose_date_button">Choose a Date:</string>
     <string name="add_dinner_save_button">Save Dinner</string>
     <string name="add_dinner_cancel_button">Cancel</string>
     <string name="add_dinner_choose_ingredients">Choose Ingredients:</string>
+    <string name="add_dinner_100XP">Added new dinner: +100XP!</string>
+
 
     <!-- Statistics Activity strings -->
-    <string name="title_activity_statistics">Statistics</string>
-    <string name="large_text">
-        "Coming Soon!\n"
-    </string>
+    <string name="title_activity_statistics">Your Profile</string>
+    <string name="statistics_unknown_badge">Unknown Badge</string>
 
     <!-- Preferences Activity strings -->
     <string name="title_activity_preferences">Preferences</string>
     <string name="preferences_name_category">About You</string>
-    <string name="preferences_your_name_title">Your name:</string>
+    <string name="preferences_your_name_title">Your name</string>
     <string name="preferences_your_name_edit">Enter your name&#8230;</string>
     <string name="preferences_ingredients_category">Ingredients:</string>
     <string name="preferences_ingredients_title">Edit ingredients</string>
+    <string name="preferences_recommendation_category">Recommendation Settings</string>
+    <string name="preferences_recommendation_summary">Turn off or on recommendation options</string>
+    <string name="preferences_recommendation_rating_title">Ratings</string>
+    <string name="preferences_recommendation_rating_summary">Use ratings score to recommend dinners</string>
+    <string name="preferences_recommendation_history_title">History</string>
+    <string name="preferences_recommendation_history_summary">Use logged dates to recommend dinners</string>
 
     <!-- Dialog Edit Ingredient Activity Strings -->
     <string name="title_activity_edit_ingredients">Edit Ingredients</string>
@@ -77,7 +85,7 @@
     <string name="dialog_confirm_button">Confirm</string>
     <string name="dialog_add_ingredient_button">+Add new ingredient</string>
 
-    <!-- Enum values -->
+    <!-- Ingredient Enum values -->
     <string name="enum_meat">Meat</string>
     <string name="enum_poultry">Poultry</string>
     <string name="enum_seafood">Seafood</string>
@@ -98,6 +106,17 @@
     <string name="ingredient_dialog_toast_missing_name_error">Please enter a name for the ingredient</string>
     <string name="ingredient_dialog_toast_success">Ingredient saved!</string>
     <string name="ingredient_dialog_toast_unknown_error">Error: Couldn\'t save ingredient! Please contact us!</string>
+
+    <!-- Game Engine Strings -->
+    <string name="game_engine_new_user">Newcomer!</string>
+    <string name="game_engine_first_dinner">First dinner added!</string>
+    <string name="game_engine_fifth_dinner">Aspiring Chef</string>
+    <string name="game_engine_tenth_dinner">Master Chef!</string>
+    <string name="game_engine_first_suggestion">First suggestion</string>
+    <string name="game_engine_fifth_suggestion">Picky taster</string>
+    <string name="game_engine_tenth_suggestion">Connoisseur!</string>
+    <string name="game_engine_mass_deletionist">Mass Deletionist</string>
+    <string name="game_engine_new_badge">Achieved a new badge:</string>
 
     <!-- Utility strings -->
     <string name="utility_no_dinner">Couldn\'t find dinner! :(</string>
