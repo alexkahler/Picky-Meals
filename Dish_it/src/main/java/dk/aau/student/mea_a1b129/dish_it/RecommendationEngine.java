@@ -18,7 +18,7 @@ class RecommendationEngine {
     private static final String TAG = RecommendationEngine.class.getSimpleName();
     private IngredientRepository ir;
     private DinnerRepository dr;
-    private static int recommendedDinner;
+    private static int recommendedDinner = -1;
     private static final int RATING_TOTAL = 5;
     private int ratingWeight = 2;
     private boolean ratingEnabled;
@@ -41,18 +41,27 @@ class RecommendationEngine {
     }
 
     /**
-     * Return the generated recommendation. This does NOT generate a new recommendation - use genereateNewRecomendation for this.
-     * @return Integer Dinner ID of the recommended Dinner
+     * Return the currently recommended Dinner without generating a new recommendation.
+     * If this method is run before the generateNewRecommendation() in a new instance, then it will generate a new recommendation before returning the ID.
+     * @return int ID of the recommended Dinner
+     * @see Dinner
      */
     public int getDinnerRecommendation() {
+        //If this is called - without this instance not having generated a recommendation yet, then make a new recommendation first, and then return that number.
+        if(recommendedDinner == -1) {
+            return generateNewRecommendation();
+        }
+        //Else just return the int value without generating a new Dinner ID.
         return recommendedDinner;
     }
 
     /**
      * Generate a new Dinner recommendation based on various factors, herein ratings, history, variedness of the dinner, etc.
-     * Use getDinnerRecommendation to get the newly generated Dinner ID of the latest recommended dinner.
+     * The Dinner ID is saved in the instance variable of the class. Use getDinnerRecommendation to get the latest generated Dinner ID without generating a new ID.
+     * @return int ID of the recommended Dinner.
+     * @see Dinner
      */
-    public void generateNewRecommendation() {
+    public int generateNewRecommendation() {
         List<Dinner> dinnerList = dr.getDinnerList();
         Calendar dateLimit = Calendar.getInstance();
 
@@ -70,12 +79,12 @@ class RecommendationEngine {
                 ratingScore = (((double)d.getRating()/RATING_TOTAL)*ratingWeight);
             }
             if(variedEnabled) {
-                variedScore = ((double) (Calendar.getInstance().getTime().getTime() - d.getDate().getTime()) /
+                variedScore = ((double)(Calendar.getInstance().getTime().getTime() - d.getDate().getTime()) /
                         (Calendar.getInstance().getTime().getTime() - dateLimit.getTime().getTime())) * variedWeight;
             }
 
             //Add all of the scores together for a final score.
-            double score = ratingScore; // + variedScore;
+            double score = ratingScore + variedScore;
 
             //If this was the highest score then save the dinner as our current recommended dinner.
             if (score > dinnerScore && !previouslyRecommended.contains(d.getDinnerID())) {
@@ -91,6 +100,7 @@ class RecommendationEngine {
         if(previouslyRecommended.size() == dinnerList.size()) {
             previouslyRecommended.clear();
         }
+        return recommendedDinner;
     }
 
     /**

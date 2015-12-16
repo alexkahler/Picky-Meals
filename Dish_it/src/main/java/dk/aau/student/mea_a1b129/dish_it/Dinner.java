@@ -1,6 +1,7 @@
 package dk.aau.student.mea_a1b129.dish_it;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,10 +14,12 @@ TODO: Make cuisine a database dependent selection.
  */
 
 /**
+ * Dinner class, which holds each individual dinner.
  * @author Aleksander Kähler, Group B129, Aalborg University
  */
 public class Dinner implements Comparable {
 
+    //These public static final Strings are used to refer to each table column in the database.
     public static final String TABLE_NAME = "MealsTable";
     public static final String KEY_ID = "_id";
     public static final String KEY_NAME = "name";
@@ -31,58 +34,111 @@ public class Dinner implements Comparable {
     private String name;
     private String description;
     private String cuisine;
-    private int rating;
+    private float rating;
     private Date date;
     private double price;
 
+    //Empty constructor
     public Dinner() {
     }
 
+    /**
+     * Get the dinner ID of the current dinner.
+     * @return
+     */
     public int getDinnerID() {
         return dinnerID;
     }
 
-    public void setDinnerID(int id) {
+    /**
+     * Set the dinner ID of the Dinner
+     * @param id the ID of the dinner to be set.
+     */
+    public void setDinnerID(@NonNull int id) {
         dinnerID = id;
     }
 
+    /**
+     * Get the name of the Dinner.
+     * @return the name as a String
+     */
     public String getName() {
         return name;
     }
 
-    public void setName(String newName) {
+    /**
+     * Set the name of the Dinner
+     * @param newName the new name of the Dinner.
+     */
+    public void setName(@NonNull String newName) {
         name = newName;
     }
 
+    /**
+     * Get the description of the Dinner
+     * @return the description of the Dinner as a String.
+     */
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String newDescription) {
+    /**
+     * Set the description of the Dinner
+     * @param newDescription the new description to be set.
+     */
+    public void setDescription(@Nullable String newDescription) {
         description = newDescription;
     }
 
+    /**
+     * Get the cuisine of the Dinner.
+     * @return the cuisine as a String.
+     */
     public String getCuisine() {
         return cuisine;
     }
 
-    public void setCuisine(String newCuisine) {
+    /**
+     * Set the cuisine of the Dinner.
+     * @param newCuisine the new cuisine to be set, as a String.
+     */
+    public void setCuisine(@Nullable String newCuisine) {
         cuisine = newCuisine;
     }
 
-    public int getRating() {
+    /**
+     * Get the current rating of the Dinner
+     * @return the rating as a float.
+     */
+    public float getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    /**
+     * Set the rating of the Dinner
+     * @param rating the rating as a float.
+     */
+    public void setRating(@NonNull float rating) {
         this.rating = rating;
     }
 
-    public void addIngredients(int newIngredientID) {
+    /**
+     * Add an Ingredient to the Dinner.
+     * @param newIngredientID the ID of the Ingredient to be added.
+     * @see Ingredient
+     */
+    public void addIngredients(@NonNull int newIngredientID) {
         ingredientID.add(newIngredientID);
     }
 
-    public boolean removeIngredients(int ingredientsID) {
+    /**
+     * Remove an Ingredient from the Ingredient.
+     * @param ingredientsID the ID of the Ingredient to be removed.
+     * @return returns true if the ingredient was successfully removed.
+     * @see Ingredient
+     */
+    public boolean removeIngredients(@NonNull int ingredientsID) {
+        //Check to see if the list of Ingredients contain the ID.
         if (ingredientID.contains(ingredientsID)) {
             ingredientID.remove(ingredientsID);
             return true;
@@ -91,28 +147,52 @@ public class Dinner implements Comparable {
         }
     }
 
+    /**
+     * Get a list of all the Ingredients in the Dinner
+     * @return a List of Ingredients
+     * @see List
+     */
     public List<Integer> getIngredientID() {
         return ingredientID;
     }
 
+    /**
+     * Get the date of the Dinner
+     * @return the date of the Dinner as a Date-object
+     * @see Date
+     */
     public Date getDate() {
         return date;
     }
 
+    /**
+     * Set the Date of the Dinner
+     * @param date the date to be set
+     * @see Date
+     */
     public void setDate(Date date) {
         this.date = date;
     }
 
+    /**
+     * Get the price of the Dinner
+     * @return the price as a double
+     */
     public double getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    /**
+     * Set the price of the Dinner
+     * @param price the price as a double
+     */
+    public void setPrice(@NonNull double price) {
         this.price = price;
     }
 
     /**
      * Compares one Dinner to another and returns which is newer.
+     * Implemented method from Comparable-interface
      *
      * @param another Dinner object.
      * @return an int < 0 if this Date is less than the specified Date, 0 if they are equal, and an int > 0 if this Date is greater

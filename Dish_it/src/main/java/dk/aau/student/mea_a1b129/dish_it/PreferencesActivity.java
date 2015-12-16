@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 
 /**
  * @author Aleksander Kähler, Group B129, Aalborg University
+ * PreferenceActivity which hosts the PreferenceFragment
  */
 public class PreferencesActivity extends AppCompatActivity {
 
@@ -23,17 +24,20 @@ public class PreferencesActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-
+        //Start the PreferenceFragment which holds the preferences_main.xml
         getFragmentManager().beginTransaction()
                 .replace(R.id.preferences_fragment_container, new PreferencesFrag())
                 .commit();
     }
 
     /**
-     * Preferences Fragment to handle preferences.xml.
+     * Preferences Fragment to handle preferences_main.xml.
      */
     public static class PreferencesFrag extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
+        /**
+         * Required empty constructor
+         */
         public PreferencesFrag() {
             super();
         }
@@ -63,19 +67,33 @@ public class PreferencesActivity extends AppCompatActivity {
             getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
         }
 
+        /**
+         * This method automatically called from the interface whenever a preference is called.
+         * @param sharedPreferences
+         * @param key
+         */
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            //Find the preference with the given key
             initializeSummary(findPreference(key));
         }
 
+        /**
+         * Private helper method to insert summary into each preference object.
+         * @param preference the preference to insert
+         */
         private void initializeSummary(Preference preference) {
+            //If the preference is an instance of the PreferenceGroup
             if(preference instanceof PreferenceGroup) {
+                //Then go in and find each preference in the PreferenceGroup and recursively call the method again.
                 PreferenceGroup prefGroup = (PreferenceGroup) preference;
                 for(int i = 0; i < prefGroup.getPreferenceCount(); i++) {
                     initializeSummary(prefGroup.getPreference(i));
                 }
             }
+            // Else if the preference is a edittextpreference..
             else if(preference instanceof EditTextPreference) {
+                //.. Then set the summary of the edittext to the preference value.
                 EditTextPreference editTextPreference = (EditTextPreference) preference;
                 preference.setSummary(editTextPreference.getText());
             }

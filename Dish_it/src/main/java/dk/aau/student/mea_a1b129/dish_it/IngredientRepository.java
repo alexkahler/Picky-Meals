@@ -34,11 +34,15 @@ class IngredientRepository {
      * @see Ingredient
      */
     public boolean insertIngredient(String name, Ingredient.Category category) {
+        //Make content values - to be used for inserting into the database
         ContentValues cv = new ContentValues();
+        //Put the ingredient values into the content values.
         cv.put(Ingredient.KEY_NAME, name);
         cv.put(Ingredient.KEY_CATEGORY, category.name());
         Log.i("SQL", "IngredientRepository: insertIngredient() Accessing database");
+        //Insert the ingredients
         dbHelper.getWritableDatabase().insert(Ingredient.TABLE_NAME, null, cv);
+        dbHelper.close();
         return true;
     }
 
@@ -82,13 +86,18 @@ class IngredientRepository {
 
         if (result.moveToFirst()) {
             i.setName(result.getString(result.getColumnIndex(Ingredient.KEY_NAME)));
-            i.setCategory(result.getString(result.getColumnIndex(Ingredient.KEY_CATEGORY)));
-            i.setIngredientsID(id);
+            try {
+                i.setCategory(Ingredient.Category.valueOf(result.getString(result.getColumnIndex(Ingredient.KEY_CATEGORY))));
+            } catch(IllegalArgumentException e) {
+                Log.e(TAG, e.getMessage());
+                e.printStackTrace();
+            }
+            i.setIngredientID(id);
             result.close();
             return i;
         } else {
             i.setName("Unknown ingredient");
-            i.setCategory(Ingredient.Category.Other.name());
+            i.setCategory(Ingredient.Category.Other);
             result.close();
             return i;
         }
@@ -110,12 +119,17 @@ class IngredientRepository {
                 Ingredient i = new Ingredient();
                 try {
                     Log.v(TAG, "IngredientID " + Integer.parseInt(results.getString(results.getColumnIndex(Ingredient.KEY_ID))));
-                    i.setIngredientsID(Integer.parseInt(results.getString(results.getColumnIndex(Ingredient.KEY_ID))));
+                    i.setIngredientID(Integer.parseInt(results.getString(results.getColumnIndex(Ingredient.KEY_ID))));
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
                 i.setName(results.getString(results.getColumnIndex(Ingredient.KEY_NAME)));
-                i.setCategory(results.getString(results.getColumnIndex(Ingredient.KEY_CATEGORY)));
+                try {
+                    i.setCategory(Ingredient.Category.valueOf(results.getString(results.getColumnIndex(Ingredient.KEY_CATEGORY))));
+                } catch (IllegalArgumentException e) {
+                    Log.e(TAG, e.getMessage());
+                    e.printStackTrace();
+                }
                 ingredientList.add(i);
             }
             while (results.moveToNext());

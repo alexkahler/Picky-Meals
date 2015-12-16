@@ -1,7 +1,6 @@
 package dk.aau.student.mea_a1b129.dish_it;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 
 /**
@@ -16,9 +15,12 @@ public class Ingredient {
     public static final String KEY_CATEGORY = "category";
     private static final String TAG = "Ingredient";
     private String name;
-    private int ingredientsID;
+    private int ingredientID;
     private Category category;
 
+    /**
+     * Empty constructor
+     */
     public Ingredient() {
     }
 
@@ -50,32 +52,52 @@ public class Ingredient {
         this.name = name;
     }
 
+    /**
+     * Get the Category of the Ingredient.
+     * @return Ingredient.Category of the Ingredient
+     * @see dk.aau.student.mea_a1b129.dish_it.Ingredient.Category
+     */
     public Ingredient.Category getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
-        try {
-            this.category = Category.valueOf(category);
-        } catch (IllegalArgumentException e) {
-            Log.e(TAG, "Couldn't find value of " + category + e.toString());
-            e.printStackTrace();
-        }
+    /**
+     * Set the Category of the Category.
+     * @param category the Category of the Ingredient
+     * @see dk.aau.student.mea_a1b129.dish_it.Ingredient.Category
+     */
+    public void setCategory(@NonNull Category category) {
+        this.category = category;
     }
 
-    public int getIngredientsID() {
-        return ingredientsID;
+    /**
+     * Get the Ingredient ID
+     * @return int ID of the Ingredient
+     */
+    public int getIngredientID() {
+        return ingredientID;
     }
 
-    public void setIngredientsID(int ingredientsID) {
-        this.ingredientsID = ingredientsID;
+    /**
+     * Set the ID of the Ingredient.
+     * @param ingredientID the int value of the ID, that the Ingredient should have.
+     */
+    public void setIngredientID(int ingredientID) {
+        this.ingredientID = ingredientID;
     }
 
+    /**
+     * Overridden toString method, to show the name value of the Ingredient.
+     * @return
+     */
     @Override
     public String toString() {
-        return name;
+        return name + ", " + category.toString();
     }
 
+    /**
+     * Ingredient Categories as enum type.
+     */
     public enum Category {
         Meat(R.string.enum_meat),
         Poultry(R.string.enum_poultry),
@@ -90,26 +112,26 @@ public class Ingredient {
         Other(R.string.enum_other),
         Oil(R.string.enum_oil);
 
+        //The String resource ID of the Category name.
         private final int resourceID;
 
         /**
-         * Category of the ingredient.
+         * Ingredient Category.
          *
-         * @param id the Android Resource ID which points to the string in the Category
+         * @param id the Android String Resource ID which points to the string in the Category
          * @see dk.aau.student.mea_a1b129.dish_it.R.string
          */
         Category(int id) {
             this.resourceID = id;
         }
 
-        public Category[] getAllCategories() {
-            return Category.values();
-        }
-
+        /**
+         * Overridden toString method to show the String in the Android resource ID
+         * @return
+         */
         @Override
         public String toString() {
             return HomeActivity.getContext().getString(resourceID);
         }
     }
-
 }

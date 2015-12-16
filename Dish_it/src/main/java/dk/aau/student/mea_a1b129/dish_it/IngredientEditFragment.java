@@ -17,16 +17,17 @@ import android.widget.Toast;
 /**
  * @author Aleksander Kähler, Group b129, Aalborg University
  * TODO: Make test to see if activity was resumed after pause.
+ * IngredientEditFragment to choose or edit ingredients.
  */
-public class IngredientDialogFragment extends DialogFragment {
+public class IngredientEditFragment extends DialogFragment {
 
-    private static final String TAG = IngredientDialogFragment.class.getSimpleName();
+    private static final String TAG = IngredientEditFragment.class.getSimpleName();
     private OnFragmentInteractionListener mListener;
     private int ingredientID;
     private Context context;
     private boolean inEditMode = false;
 
-    public IngredientDialogFragment() {
+    public IngredientEditFragment() {
         // Required empty public constructor
     }
 

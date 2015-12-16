@@ -36,8 +36,13 @@ public class AddDinnerActivity extends AppCompatActivity implements IngredientCh
     private DatePickerDialog datePickerDialog;
     private ArrayList<Ingredient> ingredientList = new ArrayList<>();
     private IngredientGridAdapter iga;
+    private DinnerRepository dr = new DinnerRepository(getApplicationContext());
     private int dinnerID;
 
+    /**
+     * Overridden onCreate method. This is initialized in the Activity life-cycle by the Android system.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,17 +56,19 @@ public class AddDinnerActivity extends AppCompatActivity implements IngredientCh
         findViewsByID();
         assignListeners();
         updateAdapter();
+
+        //If we're opening a dinner from history, then pre-populate the fields.
         if (getIntent().hasExtra("dinnerID")) {
-            DinnerRepository dr = new DinnerRepository(getApplicationContext());
             dinnerID = getIntent().getIntExtra("dinnerID", -1);
-            dinnerName.setText(dr.getDinner(dinnerID).getName());
-            dinnerCategory.setText(dr.getDinner(dinnerID).getCuisine());
-            dinnerDescription.setText(dr.getDinner(dinnerID).getDescription());
-            dinnerRating.setRating(dr.getDinner(dinnerID).getRating());
+            Dinner d = dr.getDinner(dinnerID);
+            dinnerName.setText(d.getName());
+            dinnerCategory.setText(d.getCuisine());
+            dinnerDescription.setText(d.getDescription());
+            dinnerRating.setRating(d.getRating());
             dateText.setText(new SimpleDateFormat("dd-MM-yyyy", new Locale("da", "DK")).format(Calendar.getInstance().getTime()));
-            dinnerPrice.setText(dr.getDinner(dinnerID).getPrice() + "");
+            dinnerPrice.setText(d.getPrice() + "");
             IngredientRepository ir = new IngredientRepository(getApplicationContext());
-            for (int i : dr.getDinner(dinnerID).getIngredientID()) {
+            for (int i : d.getIngredientID()) {
                 ingredientList.add(ir.getIngredient(i));
             }
             iga.notifyDataSetChanged();
@@ -69,8 +76,8 @@ public class AddDinnerActivity extends AppCompatActivity implements IngredientCh
 
     }
 
-    /*
-    Find all of the related views in the XML schema.
+    /**
+     * Find all of the related views in the XML schema.
      */
     private void findViewsByID() {
         dinnerName = (EditText) findViewById(R.id.add_dinner_edit_dinner_name);
@@ -90,15 +97,14 @@ public class AddDinnerActivity extends AppCompatActivity implements IngredientCh
         gridView = (GridView) findViewById(R.id.add_dinner_ingredient_gridview);
     }
 
-    /*
-    Here we assign listeners and actions to our buttons.
+    /**
+     * Here we assign listeners and actions to our buttons.
      */
     private void assignListeners() {
         //First the save button
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DinnerRepository dr = new DinnerRepository(getApplicationContext());
                 //If the user hasn't input a name then we stop and ask them to do so.
                 if (dinnerName.getText().length() == 0) {
                     Toast.makeText(getApplicationContext(), "Please input a name for the dinner", Toast.LENGTH_SHORT).show();
@@ -106,14 +112,13 @@ public class AddDinnerActivity extends AppCompatActivity implements IngredientCh
                     //Go through all of the ingredients and add their respective ID's.
                     List<Integer> ingredientIDList = new ArrayList<>();
                     for (Ingredient i : ingredientList) {
-                        ingredientIDList.add(i.getIngredientsID());
+                        ingredientIDList.add(i.getIngredientID());
                     }
+                    double price = 0;
                     //If we're updating a dinner
                     if (dinnerID > 0) {
-                        Log.d(TAG, "Updating dinner with id: " + dinnerID);
-                        double price = 0;
                         try {
-                            Double.parseDouble(dinnerPrice.getText().toString());
+                            price = Double.parseDouble(dinnerPrice.getText().toString());
                         } catch(NumberFormatException e) {
                             Log.e(TAG, "Can't format nothing..." + e.getMessage());
                             e.printStackTrace();
@@ -124,16 +129,14 @@ public class AddDinnerActivity extends AppCompatActivity implements IngredientCh
                                 dinnerDescription.getText().toString(),
                                 dinnerCategory.getText().toString(),
                                 ingredientIDList,
-                                Math.round(dinnerRating.getRating()),
+                                dinnerRating.getRating(),
                                 dinnerDate.getTime(),
                                 price);
                     }
                     //else make a new dinner
                     else {
-                        Log.d(TAG, "Inserting dinner");
-                        double price = 0;
                         try {
-                            Double.parseDouble(dinnerPrice.getText().toString());
+                            price = Double.parseDouble(dinnerPrice.getText().toString());
                         } catch(NumberFormatException e) {
                             Log.e(TAG, "Can't format nothing..." + e.getMessage());
                             e.printStackTrace();
@@ -143,7 +146,7 @@ public class AddDinnerActivity extends AppCompatActivity implements IngredientCh
                                 dinnerDescription.getText().toString(),
                                 dinnerCategory.getText().toString(),
                                 ingredientIDList,
-                                Math.round(dinnerRating.getRating()),
+                                dinnerRating.getRating(),
                                 dinnerDate.getTime(),
                                 price);
                         GameEngine ge = new GameEngine(getApplicationContext());

@@ -22,7 +22,7 @@ class IngredientGridAdapter extends BaseAdapter {
     private List<Ingredient> ingredients = new ArrayList<>();
 
     /**
-     * Constructor
+     * IngredientGridAdapter to show ingredients in a grid.
      *
      * @param context the context of the app
      * @see Context
@@ -36,24 +36,30 @@ class IngredientGridAdapter extends BaseAdapter {
     @SuppressWarnings("deprecation")
     public View getView(int position, View convertView, ViewGroup parent) {
         TextView textView;
-
+        //If the convert view hasn't been set and inflated then we do it now.
         if (convertView == null) {
+            //Make a new text view and set its values..
             textView = new TextView(context);
             textView.setGravity(Gravity.CENTER);
             textView.setPadding(15, 15, 15, 15);
             textView.setTextSize(18);
+            //Set the layout parameters to wrap content
             textView.setLayoutParams(new GridView.LayoutParams(GridView.LayoutParams.WRAP_CONTENT, GridView.LayoutParams.WRAP_CONTENT));
         } else {
             textView = (TextView) convertView;
         }
 
+        //Then we set the backbround to the drawable resource and give it a gradient.
         textView.setBackgroundResource(R.drawable.rounded_corners);
         GradientDrawable d = (GradientDrawable) textView.getBackground();
+        //If the ingredients list is empty..
         if (ingredients.isEmpty()) {
+            //Then we make a temporary ingredient with the name "No ingredients to show"
             ingredients.add(new Ingredient("No ingredients to show.", Ingredient.Category.Other));
         }
+        //Figure out which build we're running because of a deprecated method..
         if (Build.VERSION.SDK_INT > 23) {
-            //Set colors on the ingredients tags
+            //Set colors on the ingredients tags with a case-switch statement.
             switch (ingredients.get(position).getCategory()) {
                 case Vegetable: {
                     d.setColor(context.getResources().getColor(R.color.colorVegetable, null));
@@ -155,6 +161,7 @@ class IngredientGridAdapter extends BaseAdapter {
                 }
             }
         }
+        //Finally set the text in the text view to the ingredient name and return it.
         textView.setText(ingredients.get(position).getName());
         return textView;
     }

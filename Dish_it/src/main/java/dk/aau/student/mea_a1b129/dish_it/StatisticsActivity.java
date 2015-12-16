@@ -14,7 +14,8 @@ import java.util.Arrays;
 import java.util.Collections;
 
 /**
- * TODO: Implement statistics activity
+ * @author Aleksander Kähler, Group B129, Aalborg University
+ * Statistic Activity to show various statistics about the user, like badget, logged meals, etc.
  */
 public class StatisticsActivity extends AppCompatActivity {
 
@@ -32,11 +33,10 @@ public class StatisticsActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+        //Find our grid from the layout and save it in a variable.
         GridView badgesGrid = (GridView) findViewById(R.id.statistics_badges_grid);
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            //badgesGrid.setNestedScrollingEnabled(true);
-        }
         GameEngine ge = new GameEngine(context);
+        //Set the adapter of the grid.
         BadgeGridAdapter adapter = new BadgeGridAdapter(context, ge.getAchievements());
         badgesGrid.setAdapter(adapter);
     }

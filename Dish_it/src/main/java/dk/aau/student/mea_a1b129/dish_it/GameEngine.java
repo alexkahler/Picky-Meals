@@ -3,6 +3,7 @@ package dk.aau.student.mea_a1b129.dish_it;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -30,30 +31,35 @@ import java.util.List;
      * @see Context
      */
     public GameEngine(Context context) {
+        //Save our context for later use.
         this.context = context;
         //Get saved states from earlier upon initialization.
         sp = PreferenceManager.getDefaultSharedPreferences(this.context);
-        currentLevel = sp.getLong("currentLevel", 1);
-        currentExperience = sp.getLong("currentExperience", 0);
+        //Get the current level and experience from our Shared Preferences.
+        currentLevel = sp.getLong("currentLevel", 1); //We return level 1, if the level was not found
+        currentExperience = sp.getLong("currentExperience", 0); //We return 0, if the amount of experience was not found.
 
+        //Now we go though each type of progression possibility and save our Achievements status to a HashMap
         for(ProgressionType pt : ProgressionType.values()) {
             achievements.put(pt, new Achievement(sp.getInt(pt.name(), 0), pt));
         }
     }
 
     /**
-     * Get current level of the app.
-     * @return current level as long
+     * Get current level of the user.
+     * @return current level as a long
      */
     public long getCurrentLevel() {
         return currentLevel;
     }
 
     /**
-     * Add experience to game engine. Level is automatically calculated from experience. Use getCurrentLevel after to receive the latest level.
+     * Add experience to the GameEngine. Level is automatically calculated from experience.
+     * Remember to use getCurrentLevel() to receive the latest level after adding experience.
      * @param experience amount of experience to add.
+     * @return the current experience after added experience.
      */
-    public void addExperience(long experience) {
+    public long addExperience(long experience) {
         //Add new XP to our old XP.
         this.currentExperience = currentExperience + experience;
         calculateLevel();
@@ -63,6 +69,7 @@ import java.util.List;
         editor.putLong("currentLevel", currentLevel);
         editor.putLong("currentExperience", currentExperience);
         editor.apply();
+        return currentExperience;
     }
 
     /**
@@ -108,13 +115,20 @@ import java.util.List;
      * @see dk.aau.student.mea_a1b129.dish_it.GameEngine.ProgressionType
      * @see dk.aau.student.mea_a1b129.dish_it.GameEngine.BadgeType
      */
-    public void trackProgression(ProgressionType progressionType, int progressionUpdate) {
+    public void trackProgression(@NonNull ProgressionType progressionType, int progressionUpdate) {
+        //Get the editor, so we can edit our save data.
         SharedPreferences.Editor editor = sp.edit();
+        //Update our progression in the HasMap.
         achievements.get(progressionType).updateProgression(progressionUpdate);
+        //Save the progression.
         editor.putInt(progressionType.name(), achievements.get(progressionType).getCurrentProgression());
         editor.apply();
     }
 
+    /**
+     * Get a List of the Achievements.
+     * @return Achievements as a List
+     */
     public List<Achievement> getAchievements() {
         return new ArrayList<>(achievements.values());
     }
@@ -122,15 +136,23 @@ import java.util.List;
     /**
      * Inner class for Achievements.
      */
-    public class Achievement {
+    class Achievement {
 
         private int currentProgression;
         private ProgressionType progressionType;
         private HashMap<BadgeType, Boolean> badges = new HashMap<>();
 
+        /**
+         * Achievements constructor.
+         * @param currentProgression the current progression in the type of achievement.
+         * @param type the type of achievement.
+         * @see dk.aau.student.mea_a1b129.dish_it.GameEngine.ProgressionType
+         */
         public Achievement(int currentProgression, ProgressionType type) {
+            //Save our parameter values to our instance variables.
             this.currentProgression = currentProgression;
             this.progressionType = type;
+            //Now we set the type of badges this Achievement is related to.
             switch(progressionType) {
                 case DINNERS_ADDED:
                     badges.put(BadgeType.First_Dinner, checkAchieved(BadgeType.First_Dinner, currentProgression));
@@ -150,32 +172,49 @@ import java.util.List;
             }
         }
 
+        /**
+         * Update the progression in the Achievement
+         * @param p the amount to be added to the progression.
+         */
         protected void updateProgression(int p) {
             currentProgression += p;
+            //Iterate through the badge types in our achievement..
             for(BadgeType bt : badges.keySet()) {
+                //If our current progression matches the goal of a badge.
                 if(currentProgression == bt.getBadgeGoal()) {
+                    //Then make a toast and notify the user.
                     Toast.makeText(context, context.getString(R.string.game_engine_new_badge) + " " + bt.toString() + "!", Toast.LENGTH_LONG).show();
+                    badges.put(bt, checkAchieved(bt, currentProgression));
+
                 }
             }
         }
 
+        /**
+         * Get the current progression.
+         * @return the current progression as an int
+         */
         protected int getCurrentProgression() {
             return currentProgression;
         }
 
-        protected ProgressionType getProgressionType() {
-            return progressionType;
-        }
-
+        /**
+         * Get the types of badges this Achievement is related to
+         * @return the Badges as a HashMap, where KeySet is the BadgeType and Value is the boolean status of whether it has been achieved.
+         * @see dk.aau.student.mea_a1b129.dish_it.GameEngine.BadgeType
+         */
         protected HashMap<BadgeType, Boolean> getBadges() {
             return badges;
         }
 
-        protected Boolean isAchieved(BadgeType badge) {
-            return checkAchieved(badge, currentProgression);
-        }
-
-        private Boolean checkAchieved(BadgeType bt, int currentProgression) {
+        /**
+         * Check whether or not a specific Badge has been achieved with the current progression.
+         * @param bt the BadgeType to check
+         * @param currentProgression the current progression of the achievement.
+         * @return true if the badge has been achieved.
+         * @see dk.aau.student.mea_a1b129.dish_it.GameEngine.BadgeType
+         */
+        private Boolean checkAchieved(@NonNull BadgeType bt, int currentProgression) {
             if (currentProgression >= bt.getBadgeGoal()) {
                 return true;
             }
@@ -194,7 +233,7 @@ import java.util.List;
     }
 
     /**
-     * Enum badge types.
+     * The types of badges that can be earned as an Enum.
      */
     public enum BadgeType {
 
@@ -211,20 +250,38 @@ import java.util.List;
         private final int badgeImageID;
         private final int badgeGoal;
 
+        /**
+         * Constructor for the Enum class.
+         * @param stringID the int value of the String resource.
+         * @param badgeID the int value of the drawable image resource.
+         * @param badgeGoal the int value of the goal, which signifies completion.
+         */
         BadgeType(int stringID, int badgeID, int badgeGoal) {
             resourceID = stringID;
             this.badgeImageID = badgeID;
             this.badgeGoal = badgeGoal;
         }
 
+        /**
+         * Get the drawable image resource ID.
+         * @return the int value of the resource ID.
+         */
         public int getBadgeImageID() {
             return badgeImageID;
         }
 
+        /**
+         * Get the goal for the enum Badge.
+         * @return the int value of the goal.
+         */
         public int getBadgeGoal() {
             return badgeGoal;
         }
 
+        /**
+         * Get the String value of the BadgeType.
+         * @return the String value from the resource ID attached to the Enum value.
+         */
         @Override
         public String toString() {
             return HomeActivity.getContext().getString(resourceID);
